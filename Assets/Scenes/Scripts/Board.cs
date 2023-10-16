@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,9 +10,11 @@ public class Board : MonoBehaviour
     [SerializeField] private float tileSize;
 
     private GameObject[][] tiles;
+    private Vector2Int? currentHover = null;
 
     private static float x_offset;
     private static float y_offset;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -38,19 +41,49 @@ public class Board : MonoBehaviour
         }
     }
 
+
     public GameObject GenerateOneTile(int x, int y)
     {
         GameObject tile = Instantiate(tilePrefab, transform);
         tile.name = $"tile {x} {y}";
         tile.transform.position = TransformCoordinates(x,y);
-
-        // PinObject.layer = LayerMask.NameToLayer("tile_default");
+        tile.layer = LayerMask.NameToLayer("Tile");
         tile.AddComponent<BoxCollider>();
-
         return tile;
     }
 
     public Vector3 TransformCoordinates(int x, int y)
         => new Vector3(x * x_offset, 0, y * y_offset + (y_offset / 2) * (x % 2));
-    
+
+
+    public Vector2Int LookUpTileIndex(GameObject hitInfo)
+    {
+        for (int i = 0; i < 9; i++)
+            for (int j = 0; j < tiles[i].Length; j++)
+                if(tiles[i][j] == hitInfo)
+                    return new Vector2Int(i,j);
+
+        throw new Exception("Не найден тайл на который указывал курсор");
+    }
+
+    public void HoverTile(Vector2Int coordinates)
+    {
+        if (currentHover == coordinates) return;
+
+        if (currentHover != null)
+            tiles[currentHover.Value.x][currentHover.Value.y].layer = LayerMask.NameToLayer("Tile");
+
+        tiles[coordinates.x][coordinates.y].layer = LayerMask.NameToLayer("HoverTile");
+        Debug.Log($"{coordinates.x} {coordinates.y}");
+        currentHover = coordinates;
+    }
+
+
+    internal void RemoveHover()
+    {
+        if (currentHover != null)
+            tiles[currentHover.Value.x][currentHover.Value.y].layer = LayerMask.NameToLayer("Tile");
+    }
+
+
 }
