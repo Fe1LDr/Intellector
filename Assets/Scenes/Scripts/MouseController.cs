@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class MouseController : MonoBehaviour
 {
-    [SerializeField] public Board board;
+    [SerializeField] private Board board;
 
     private Camera currentCamera;
 
