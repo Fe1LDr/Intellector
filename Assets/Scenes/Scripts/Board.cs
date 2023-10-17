@@ -70,7 +70,7 @@ public class Board : MonoBehaviour
         pieces[1][0] = GenerateSinglePiece(PieceType.liberator, false, 1, 0);
         pieces[2][0] = GenerateSinglePiece(PieceType.agressor, false, 2, 0);
         pieces[3][0] = GenerateSinglePiece(PieceType.defensor, false, 3, 0);
-       // pieces[4][0] = GenerateSinglePiece(PieceType.intellector, false, 4, 0);
+        pieces[4][0] = GenerateSinglePiece(PieceType.intellector, false, 4, 0);
         pieces[5][0] = GenerateSinglePiece(PieceType.defensor, false, 5, 0);
         pieces[6][0] = GenerateSinglePiece(PieceType.agressor, false, 6, 0);
         pieces[7][0] = GenerateSinglePiece(PieceType.liberator, false, 7, 0);
@@ -82,7 +82,7 @@ public class Board : MonoBehaviour
         pieces[1][5] = GenerateSinglePiece(PieceType.liberator, true, 1, 5);
         pieces[2][6] = GenerateSinglePiece(PieceType.agressor, true, 2, 6);
         pieces[3][5] = GenerateSinglePiece(PieceType.defensor, true, 3, 5);
-       // pieces[4][6] = GenerateSinglePiece(PieceType.intellector, true, 4, 6);
+        pieces[4][6] = GenerateSinglePiece(PieceType.intellector, true, 4, 6);
         pieces[5][5] = GenerateSinglePiece(PieceType.defensor, true, 5, 5);
         pieces[6][6] = GenerateSinglePiece(PieceType.agressor, true, 6, 6);
         pieces[7][5] = GenerateSinglePiece(PieceType.liberator, true, 7, 5);
@@ -99,7 +99,7 @@ public class Board : MonoBehaviour
         piece.team = team;
         piece.board = this;
         piece.transform.position = TransformCoordinates(x, y);
-        piece.GetComponent<MeshRenderer>().materials = (team == true) ? new Material[]{ WhiteTeamMaterial} : new Material[] { BlackTeamMaterial};
+        piece.GetComponent<MeshRenderer>().materials = (team == true) ? new Material[]{ BlackTeamMaterial} : new Material[] { WhiteTeamMaterial };
         return piece;
     }
 
