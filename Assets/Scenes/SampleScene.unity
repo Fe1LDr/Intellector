@@ -452,7 +452,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2977ed6f80cae3149ae792db6f68c373, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilePrefab: {fileID: 919132149155446097, guid: 53c617e3482092541b3d0c86f3ddb78f, type: 3}
+  tilePrefab: {fileID: 8123328340092248246, guid: 750d4c84fce986a4792c389cff4447ae, type: 3}
   piecesPrefabs:
   - {fileID: 782240195250458750, guid: 79ae33d1428e7aa4b8454b50e76876f0, type: 3}
   - {fileID: 3127472121627554507, guid: 4880204f63b10ce4ab9e81c4ba25d506, type: 3}
@@ -488,7 +488,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: ff03a10b577362840900a115c827aa43, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 10.42
+      value: 10.15
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff03a10b577362840900a115c827aa43, type: 3}
       propertyPath: m_LocalPosition.y
