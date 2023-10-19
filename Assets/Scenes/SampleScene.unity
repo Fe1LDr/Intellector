@@ -346,7 +346,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 43
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -373,7 +373,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
   m_LocalRotation: {x: 0.33262756, y: -0, z: -0, w: 0.9430583}
-  m_LocalPosition: {x: 9.67, y: 9.94, z: -8.87}
+  m_LocalPosition: {x: 9.67, y: 14.1, z: -14.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -396,13 +396,13 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
   m_Cameras: []
-  m_RendererIndex: -1
+  m_RendererIndex: 0
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -452,7 +452,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2977ed6f80cae3149ae792db6f68c373, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilePrefab: {fileID: 8123328340092248246, guid: 750d4c84fce986a4792c389cff4447ae, type: 3}
+  tilePrefab: {fileID: 6648698764287502227, guid: 27e774af24a09b8499e5120284e5bc89, type: 3}
   piecesPrefabs:
   - {fileID: 782240195250458750, guid: 79ae33d1428e7aa4b8454b50e76876f0, type: 3}
   - {fileID: 3127472121627554507, guid: 4880204f63b10ce4ab9e81c4ba25d506, type: 3}
@@ -488,7 +488,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: ff03a10b577362840900a115c827aa43, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 10.2
+      value: 10.33
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff03a10b577362840900a115c827aa43, type: 3}
       propertyPath: m_LocalPosition.y
@@ -526,6 +526,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: ff03a10b577362840900a115c827aa43, type: 3}
+      propertyPath: m_Materials.Array.data[2]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4553d7256f7e62f4fa6b7c5f45a3693e, type: 2}
     - target: {fileID: 919132149155446097, guid: ff03a10b577362840900a115c827aa43, type: 3}
       propertyPath: m_Name
       value: board_model

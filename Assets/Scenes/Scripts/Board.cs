@@ -29,7 +29,7 @@ public class Board : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        x_offset = tileSize / Mathf.Sqrt(3) * 1.5f;
+        x_offset = tileSize / Mathf.Sqrt(3) * 1.51f;
         y_offset = tileSize;
 
         GenerateAllTiles();
@@ -82,7 +82,7 @@ public class Board : MonoBehaviour
         pieces[6][0] = GenerateSinglePiece(PieceType.agressor, false, 6, 0);
         pieces[7][0] = GenerateSinglePiece(PieceType.liberator, false, 7, 0);
         pieces[8][0] = GenerateSinglePiece(PieceType.dominator, false, 8, 0);
-        for(int i = 0; i < 8 ; i += 2)
+        for(int i = 0; i < 9 ; i += 2)
             pieces[i][1] = GenerateSinglePiece(PieceType.progressor, false, i, 1);
 
         pieces[0][6] = GenerateSinglePiece(PieceType.dominator, true, 0, 6);
@@ -94,7 +94,7 @@ public class Board : MonoBehaviour
         pieces[6][6] = GenerateSinglePiece(PieceType.agressor, true, 6, 6);
         pieces[7][5] = GenerateSinglePiece(PieceType.liberator, true, 7, 5);
         pieces[8][6] = GenerateSinglePiece(PieceType.dominator, true, 8, 6);
-        for (int i = 0; i < 8; i += 2)
+        for (int i = 0; i < 9; i += 2)
             pieces[i][5] = GenerateSinglePiece(PieceType.progressor, true, i, 5);
 
     }
