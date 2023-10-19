@@ -16,5 +16,5 @@ public abstract class Piece : MonoBehaviour
     // Update is called once per frame
     void Update() { }
 
-    abstract public Vector2Int GetAvaibleMooves();
+    abstract public List<Vector2Int> GetAvaibleMooves();
 }

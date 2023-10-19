@@ -17,7 +17,11 @@ public class Board : MonoBehaviour
 
     private GameObject[][] tiles;
     private Piece[][] pieces;
+
+    List<Vector2Int> AvaibleMoves;
+
     private Vector2Int? currentHover = null;
+    private Vector2Int? currentSelect = null;
 
     private static float x_offset;
     private static float y_offset;
@@ -28,8 +32,6 @@ public class Board : MonoBehaviour
         x_offset = tileSize / Mathf.Sqrt(3) * 1.5f;
         y_offset = tileSize;
 
-        
-
         GenerateAllTiles();
         GenerateAllPieces();
     }
@@ -37,9 +39,15 @@ public class Board : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (currentSelect != null)
+            tiles[currentSelect.Value.x][currentSelect.Value.y].layer = LayerMask.NameToLayer("SelectedTile");
     }
 
+    public Vector3 TransformCoordinates(int x, int y)
+        => new Vector3(x * x_offset, 0, y * y_offset + (y_offset / 2) * (x % 2));
+
+
+    //Создание поля и фигур
     public void GenerateAllTiles()
     {
         tiles = new GameObject[9][];
@@ -59,7 +67,6 @@ public class Board : MonoBehaviour
         tile.AddComponent<BoxCollider>();
         return tile;
     }
-
     public void GenerateAllPieces()
     {
         pieces = new Piece[9][];
@@ -104,11 +111,7 @@ public class Board : MonoBehaviour
     }
 
 
-    public Vector3 TransformCoordinates(int x, int y)
-        => new Vector3(x * x_offset, 0, y * y_offset + (y_offset / 2) * (x % 2));
-
-
-
+    //операции с полями и слоями
     public Vector2Int LookUpTileIndex(GameObject hitInfo)
     {
         for (int i = 0; i < 9; i++)
@@ -123,17 +126,74 @@ public class Board : MonoBehaviour
         if (currentHover == coordinates) return;
 
         if (currentHover != null)
-            tiles[currentHover.Value.x][currentHover.Value.y].layer = LayerMask.NameToLayer("Tile");
+             tiles[currentHover.Value.x][currentHover.Value.y].layer = LayerMask.NameToLayer("Tile");
 
         tiles[coordinates.x][coordinates.y].layer = LayerMask.NameToLayer("HoverTile");
         Debug.Log($"{coordinates.x} {coordinates.y}");
         currentHover = coordinates;
     }
-    internal void RemoveHover()
+    public void RemoveHover()
     {
         if (currentHover != null)
             tiles[currentHover.Value.x][currentHover.Value.y].layer = LayerMask.NameToLayer("Tile");
     }
+    public void HighlightAvaibleTiles(List<Vector2Int> coordinates)
+    {
+        foreach (Vector2Int tile in coordinates)
+            tiles[tile.x][tile.y].layer = LayerMask.NameToLayer("Avaible");
+    }
+    public void RemoveHighlight()
+    {
+        foreach (GameObject[] x_tiles in tiles)
+            foreach (GameObject tile in x_tiles)
+                tile.layer = LayerMask.NameToLayer("Tile");
+    }
 
 
+    //перемещение фигур
+    public void SelectTile(Vector2Int coordinates)
+    {
+        if (currentSelect == null && (pieces[coordinates.x][coordinates.y] != null))
+        {
+            currentSelect = coordinates;
+            try
+            {
+                AvaibleMoves = pieces[coordinates.x][coordinates.y].GetAvaibleMooves();
+            }
+            catch (NotImplementedException)
+            {
+                AvaibleMoves = new List<Vector2Int>();
+                for (int i = 0; i < 9; i++)
+                    for (int j = 0; j < tiles[i].Length; j++)
+                        if (pieces[i][j] == null)
+                            AvaibleMoves.Add(new Vector2Int(i, j));
+            }
+            
+            HighlightAvaibleTiles(AvaibleMoves);
+            return;
+        }
+
+        if(currentSelect != coordinates)
+        {
+            bool avaible = false;
+            foreach (Vector2Int move in AvaibleMoves)
+                if (coordinates == move)
+                    avaible = true;
+
+            if (avaible)
+            {
+                MovePiece(currentSelect.Value, coordinates);
+                //событие
+            }
+        }
+
+        currentSelect = null;
+        RemoveHighlight();
+    }
+    public void MovePiece(Vector2Int start, Vector2Int end)
+    {
+        pieces[start.x][start.y].transform.position = TransformCoordinates(end.x, end.y);
+        pieces[end.x][end.y] = pieces[start.x][start.y];
+        pieces[start.x][start.y] = null;
+    }
 }

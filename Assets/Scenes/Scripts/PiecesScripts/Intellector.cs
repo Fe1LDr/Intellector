@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Intellector : Piece
 {
-    public override Vector2Int GetAvaibleMooves()
+    public override List<Vector2Int> GetAvaibleMooves()
     {
         throw new System.NotImplementedException();
     }
