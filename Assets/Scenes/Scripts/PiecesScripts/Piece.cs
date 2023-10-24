@@ -5,8 +5,8 @@ using UnityEngine;
 public abstract class Piece : MonoBehaviour
 {
     public PieceType type;
-    private int x;
-    private int y;
+    public int x;
+    public int y;
     public bool team;
     public Board board;
 

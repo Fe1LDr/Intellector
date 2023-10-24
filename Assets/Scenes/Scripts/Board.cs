@@ -16,7 +16,7 @@ public class Board : MonoBehaviour
     [SerializeField] private Material BlackTeamMaterial;
 
     private GameObject[][] tiles;
-    private Piece[][] pieces;
+    public Piece[][] pieces;
 
     List<Vector2Int> AvaibleMoves;
 
@@ -104,6 +104,8 @@ public class Board : MonoBehaviour
         piece.type = type;
         piece.team = team;
         piece.board = this;
+        piece.x = x;
+        piece.y = y;
         piece.transform.position = TransformCoordinates(x, y);
         piece.GetComponent<MeshRenderer>().materials = (team == true) ? new Material[]{ BlackTeamMaterial} : new Material[] { WhiteTeamMaterial };
         return piece;
@@ -222,6 +224,8 @@ public class Board : MonoBehaviour
 
         //изменение ссылок
         pieces[end.x][end.y] = pieces[start.x][start.y];
+        pieces[end.x][end.y].x = end.x;
+        pieces[end.x][end.y].y = end.y;
         pieces[start.x][start.y] = null;
     }
 }
