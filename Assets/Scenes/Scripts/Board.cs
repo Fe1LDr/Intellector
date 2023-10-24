@@ -20,8 +20,8 @@ public class Board : MonoBehaviour
 
     List<Vector2Int> AvaibleMoves;
 
-    private Vector2Int? currentHover = null;
-    private Vector2Int? currentSelect = null;
+    private Vector2Int currentHover  = -Vector2Int.one;
+    private Vector2Int currentSelect = -Vector2Int.one;
 
     private static float x_offset;
     private static float y_offset;
@@ -39,10 +39,9 @@ public class Board : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (currentSelect != null)
-            tiles[currentSelect.Value.x][currentSelect.Value.y].layer = LayerMask.NameToLayer("SelectedTile");
+        if (currentSelect != -Vector2Int.one)
+            tiles[currentSelect.x][currentSelect.y].layer = LayerMask.NameToLayer("SelectedTile");
     }
-
     public Vector3 TransformCoordinates(int x, int y)
         => new Vector3(x * x_offset, 0, y * y_offset + (y_offset / 2) * (x % 2));
 
@@ -125,8 +124,8 @@ public class Board : MonoBehaviour
     {
         if (currentHover == coordinates) return;
 
-        if (currentHover != null)
-             tiles[currentHover.Value.x][currentHover.Value.y].layer = LayerMask.NameToLayer("Tile");
+        if (currentHover != -Vector2Int.one)
+             tiles[currentHover.x][currentHover.y].layer = LayerMask.NameToLayer("Tile");
 
         tiles[coordinates.x][coordinates.y].layer = LayerMask.NameToLayer("HoverTile");
         Debug.Log($"{coordinates.x} {coordinates.y}");
@@ -134,8 +133,8 @@ public class Board : MonoBehaviour
     }
     public void RemoveHover()
     {
-        if (currentHover != null)
-            tiles[currentHover.Value.x][currentHover.Value.y].layer = LayerMask.NameToLayer("Tile");
+        if (currentHover != -Vector2Int.one)
+            tiles[currentHover.x][currentHover.y].layer = LayerMask.NameToLayer("Tile");
     }
     public void HighlightAvaibleTiles(List<Vector2Int> coordinates)
     {
@@ -153,46 +152,75 @@ public class Board : MonoBehaviour
     //перемещение фигур
     public void SelectTile(Vector2Int coordinates)
     {
-        if (currentSelect == null && (pieces[coordinates.x][coordinates.y] != null))
-        {
-            currentSelect = coordinates;
-            try
+        //если не выбрана никакая фигура
+        if (currentSelect == -Vector2Int.one)
+            if(pieces[coordinates.x][coordinates.y] != null) //если нажали на фигуру выбираем её
             {
-                AvaibleMoves = pieces[coordinates.x][coordinates.y].GetAvaibleMooves();
-            }
-            catch (NotImplementedException)
-            {
-                AvaibleMoves = new List<Vector2Int>();
-                for (int i = 0; i < 9; i++)
-                    for (int j = 0; j < tiles[i].Length; j++)
-                        if (pieces[i][j] == null)
-                            AvaibleMoves.Add(new Vector2Int(i, j));
-            }
+                currentSelect = coordinates;
+                try
+                {
+                    AvaibleMoves = pieces[coordinates.x][coordinates.y].GetAvaibleMooves();
+                }
+                catch (NotImplementedException)
+                {
+                    AvaibleMoves = new List<Vector2Int>();
+                    for (int i = 0; i < 9; i++)
+                        for (int j = 0; j < tiles[i].Length; j++)
+                            if(pieces[i][j] == null || pieces[i][j].team != pieces[currentSelect.x][currentSelect.y].team)
+                                AvaibleMoves.Add(new Vector2Int(i, j));
+                }
             
-            HighlightAvaibleTiles(AvaibleMoves);
-            return;
+                HighlightAvaibleTiles(AvaibleMoves);
+                return;
+            }
+            else { return; }
+
+        //если уже выбрана
+        else
+        {
+            if (currentSelect == coordinates) //если нажали на ту же фигуру сбрасываем выделение
+            {
+                currentSelect = -Vector2Int.one;
+                RemoveHighlight();
+            }
+            else //а если нажали на другое поле
+            {
+                if (CanMove()) // и туда можно пойти, то идём туда
+                {
+                    MovePiece(currentSelect, coordinates);
+                    //событие
+
+                    // и сбрасываем выделение
+                    currentSelect = -Vector2Int.one;
+                    RemoveHighlight();
+                }
+            }
         }
 
-        if(currentSelect != coordinates)
+        bool CanMove()
         {
             bool avaible = false;
-            foreach (Vector2Int move in AvaibleMoves)
-                if (coordinates == move)
-                    avaible = true;
-
-            if (avaible)
-            {
-                MovePiece(currentSelect.Value, coordinates);
-                //событие
-            }
+            if (AvaibleMoves != null)
+                foreach (Vector2Int move in AvaibleMoves)
+                    if (coordinates == move)
+                        avaible = true;
+            return avaible;
         }
-
-        currentSelect = null;
-        RemoveHighlight();
     }
     public void MovePiece(Vector2Int start, Vector2Int end)
     {
+        //перемещение в пространстве
         pieces[start.x][start.y].transform.position = TransformCoordinates(end.x, end.y);
+
+        //едим если занято вражеской фигурой
+        if(pieces[end.x][end.y] != null && (pieces[end.x][end.y].team != pieces[start.x][start.y].team))
+            Destroy(pieces[end.x][end.y].GetComponent<MeshRenderer>());
+
+        //на свои фигуры пока не ходим
+        if (pieces[end.x][end.y] != null && (pieces[end.x][end.y].team == pieces[start.x][start.y].team))
+            throw new InvalidOperationException("Невозможный ход: ход на свою фигуру");
+
+        //изменение ссылок
         pieces[end.x][end.y] = pieces[start.x][start.y];
         pieces[start.x][start.y] = null;
     }
