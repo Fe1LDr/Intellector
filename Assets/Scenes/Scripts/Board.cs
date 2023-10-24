@@ -39,8 +39,24 @@ public class Board : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (currentSelect != -Vector2Int.one)
-            tiles[currentSelect.x][currentSelect.y].layer = LayerMask.NameToLayer("SelectedTile");
+        for (int i = 0; i < 9; i++)
+            for (int j = 0; j < tiles[i].Length; j++)
+            {
+                Vector2Int coor = new Vector2Int(i, j);
+                if (coor == currentSelect) tiles[coor.x][coor.y].layer = LayerMask.NameToLayer("SelectedTile");
+                else if(AvaibleMoves != null && AvaibleMoves.Contains(coor))
+                {
+                    if(coor == currentHover)
+                        tiles[coor.x][coor.y].layer = LayerMask.NameToLayer("HoverAvaible");
+                    else
+                        tiles[coor.x][coor.y].layer = LayerMask.NameToLayer("Avaible");
+                }
+                else if(coor == currentHover)
+                    tiles[coor.x][coor.y].layer = LayerMask.NameToLayer("HoverTile");
+                else
+                    tiles[coor.x][coor.y].layer = LayerMask.NameToLayer("Tile");
+
+            }
     }
     public Vector3 TransformCoordinates(int x, int y)
         => new Vector3(x * x_offset, 0, y * y_offset + (y_offset / 2) * (x % 2));
@@ -62,7 +78,7 @@ public class Board : MonoBehaviour
         GameObject tile = Instantiate(tilePrefab, transform);
         tile.name = $"tile {x} {y}";
         tile.transform.position = TransformCoordinates(x,y);
-        tile.layer = LayerMask.NameToLayer("Tile");
+
         tile.AddComponent<BoxCollider>();
         return tile;
     }
@@ -124,32 +140,13 @@ public class Board : MonoBehaviour
     }
     public void HoverTile(Vector2Int coordinates)
     {
-        if (currentHover == coordinates) return;
-
-        if (currentHover != -Vector2Int.one)
-             tiles[currentHover.x][currentHover.y].layer = LayerMask.NameToLayer("Tile");
-
-        tiles[coordinates.x][coordinates.y].layer = LayerMask.NameToLayer("HoverTile");
         Debug.Log($"{coordinates.x} {coordinates.y}");
         currentHover = coordinates;
     }
     public void RemoveHover()
     {
-        if (currentHover != -Vector2Int.one)
-            tiles[currentHover.x][currentHover.y].layer = LayerMask.NameToLayer("Tile");
+        currentHover = -Vector2Int.one;
     }
-    public void HighlightAvaibleTiles(List<Vector2Int> coordinates)
-    {
-        foreach (Vector2Int tile in coordinates)
-            tiles[tile.x][tile.y].layer = LayerMask.NameToLayer("Avaible");
-    }
-    public void RemoveHighlight()
-    {
-        foreach (GameObject[] x_tiles in tiles)
-            foreach (GameObject tile in x_tiles)
-                tile.layer = LayerMask.NameToLayer("Tile");
-    }
-
 
     //перемещение фигур
     public void SelectTile(Vector2Int coordinates)
@@ -171,8 +168,6 @@ public class Board : MonoBehaviour
                             if(pieces[i][j] == null || pieces[i][j].team != pieces[currentSelect.x][currentSelect.y].team)
                                 AvaibleMoves.Add(new Vector2Int(i, j));
                 }
-            
-                HighlightAvaibleTiles(AvaibleMoves);
                 return;
             }
             else { return; }
@@ -183,30 +178,21 @@ public class Board : MonoBehaviour
             if (currentSelect == coordinates) //если нажали на ту же фигуру сбрасываем выделение
             {
                 currentSelect = -Vector2Int.one;
-                RemoveHighlight();
+                AvaibleMoves = null;
             }
             else //а если нажали на другое поле
             {
-                if (CanMove()) // и туда можно пойти, то идём туда
+                if (AvaibleMoves.Contains(coordinates)) // и туда можно пойти, то идём туда
                 {
                     MovePiece(currentSelect, coordinates);
-                    //событие
+
+                    //здесь должно быть событие
 
                     // и сбрасываем выделение
                     currentSelect = -Vector2Int.one;
-                    RemoveHighlight();
+                    AvaibleMoves = null;
                 }
             }
-        }
-
-        bool CanMove()
-        {
-            bool avaible = false;
-            if (AvaibleMoves != null)
-                foreach (Vector2Int move in AvaibleMoves)
-                    if (coordinates == move)
-                        avaible = true;
-            return avaible;
         }
     }
     public void MovePiece(Vector2Int start, Vector2Int end)

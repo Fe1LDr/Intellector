@@ -10,7 +10,7 @@ public class MouseController : MonoBehaviour
     private Camera currentCamera;
 
 
-    private static string[] layers_names = {"Tile","HoverTile","SelectedTile","Avaible"};
+    private static string[] layers_names = {"Tile","HoverTile","SelectedTile","Avaible","HoverAvaible"};
     // Start is called before the first frame update
     void Start()
     {
@@ -30,7 +30,7 @@ public class MouseController : MonoBehaviour
         Ray ray = currentCamera.ScreenPointToRay(Input.mousePosition);
 
 
-        if (Physics.Raycast(ray, out info, 500, LayerMask.GetMask(new string[] { "Tile", "HoverTile" })))
+        if (Physics.Raycast(ray, out info, 500, LayerMask.GetMask(new string[] { "Tile", "HoverTile", "Avaible", "HoverAvaible" })))
         {
             //Выделение поля
             Vector2Int hitPosition = board.LookUpTileIndex(info.transform.gameObject);
