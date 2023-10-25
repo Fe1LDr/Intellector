@@ -156,18 +156,7 @@ public class Board : MonoBehaviour
             if(pieces[coordinates.x][coordinates.y] != null) //если нажали на фигуру выбираем её
             {
                 currentSelect = coordinates;
-                try
-                {
-                    AvaibleMoves = pieces[coordinates.x][coordinates.y].GetAvaibleMooves();
-                }
-                catch (NotImplementedException)
-                {
-                    AvaibleMoves = new List<Vector2Int>();
-                    for (int i = 0; i < 9; i++)
-                        for (int j = 0; j < tiles[i].Length; j++)
-                            if(pieces[i][j] == null || pieces[i][j].team != pieces[currentSelect.x][currentSelect.y].team)
-                                AvaibleMoves.Add(new Vector2Int(i, j));
-                }
+                AvaibleMoves = pieces[coordinates.x][coordinates.y].GetAvaibleMooves();
                 return;
             }
             else { return; }
@@ -204,14 +193,67 @@ public class Board : MonoBehaviour
         if(pieces[end.x][end.y] != null && (pieces[end.x][end.y].team != pieces[start.x][start.y].team))
             Destroy(pieces[end.x][end.y].GetComponent<MeshRenderer>());
 
-        //на свои фигуры пока не ходим
+        //при ходе на свою фигуру
         if (pieces[end.x][end.y] != null && (pieces[end.x][end.y].team == pieces[start.x][start.y].team))
-            throw new InvalidOperationException("Невозможный ход: ход на свою фигуру");
+        {
+            if (    //если это дефенсор и интеллектор
+                (pieces[start.x][start.y].type == PieceType.intellector && pieces[end.x][end.y].type == PieceType.defensor) ||
+                (pieces[start.x][start.y].type == PieceType.defensor && pieces[end.x][end.y].type == PieceType.intellector)
+               )
+            {   //то меняем их местами
+                Castling();
+            }
+            else
+                throw new InvalidOperationException("Невозможный ход: ход на свою фигуру");
+        }
 
-        //изменение ссылок
-        pieces[end.x][end.y] = pieces[start.x][start.y];
-        pieces[end.x][end.y].x = end.x;
-        pieces[end.x][end.y].y = end.y;
-        pieces[start.x][start.y] = null;
+        else
+        {
+            //изменение ссылок
+            pieces[end.x][end.y] = pieces[start.x][start.y];
+            pieces[end.x][end.y].x = end.x;
+            pieces[end.x][end.y].y = end.y;
+            pieces[start.x][start.y] = null;
+        }
+
+        if(pieces[end.x][end.y].type == PieceType.progressor &&  // если ходил прогрессор
+            (pieces[end.x][end.y].team == false && (end.y == 6)) || (pieces[end.x][end.y].team == true && (end.y == 0) && (end.x%2 == 0))) //и он дошл до поля превращения
+        {
+            ProgressorTransformation(end.x, end.y, pieces[end.x][end.y].team); // то превращаем его
+        }
+
+            
+
+
+        //"рокировка"
+        void Castling()
+        {
+            pieces[end.x][end.y].transform.position = TransformCoordinates(start.x, start.y); 
+            (pieces[start.x][start.y], pieces[end.x][end.y]) = (pieces[end.x][end.y], pieces[start.x][start.y]);
+            pieces[start.x][start.y].x = start.x;
+            pieces[start.x][start.y].y = start.y;
+            pieces[end.x][end.y].x = end.x;
+            pieces[end.x][end.y].y = end.y;
+        }
+
+        void ProgressorTransformation(int x, int y, bool team)
+        {
+            PieceType new_type;
+            try
+            {
+                new_type = AskForPieceType();
+            }
+            catch (NotImplementedException)
+            {
+                new_type = PieceType.dominator;
+            }
+            Destroy(pieces[x][y].GetComponent<MeshRenderer>());
+            pieces[x][y] = GenerateSinglePiece(new_type, team, x, y);
+        }    
+    }
+
+    PieceType AskForPieceType()
+    {
+        throw new NotImplementedException();
     }
 }

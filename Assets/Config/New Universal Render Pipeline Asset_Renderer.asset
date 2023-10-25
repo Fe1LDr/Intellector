@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Active: 1
   settings:
-    passTag: NoverAvaible
+    passTag: HoverAvaible
     Event: 500
     filterSettings:
       RenderQueueType: 1
