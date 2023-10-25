@@ -15,6 +15,7 @@ public class Board : MonoBehaviour
     [SerializeField] private Material WhiteTeamMaterial;
     [SerializeField] private Material BlackTeamMaterial;
 
+    public bool Turn;
     private GameObject[][] tiles;
     public Piece[][] pieces;
 
@@ -34,6 +35,8 @@ public class Board : MonoBehaviour
 
         GenerateAllTiles();
         GenerateAllPieces();
+
+        Turn = false;
     }
 
     // Update is called once per frame
@@ -153,7 +156,7 @@ public class Board : MonoBehaviour
     {
         //если не выбрана никакая фигура
         if (currentSelect == -Vector2Int.one)
-            if(pieces[coordinates.x][coordinates.y] != null) //если нажали на фигуру выбираем её
+            if((pieces[coordinates.x][coordinates.y] != null) && (pieces[coordinates.x][coordinates.y].team == Turn)) //если нажали на фигуру выбираем её
             {
                 currentSelect = coordinates;
                 AvaibleMoves = pieces[coordinates.x][coordinates.y].GetAvaibleMooves();
@@ -186,8 +189,14 @@ public class Board : MonoBehaviour
     }
     public void MovePiece(Vector2Int start, Vector2Int end)
     {
+        //проверка очерёдности хода
+        if (pieces[start.x][start.y].team != Turn) return;
+
         //перемещение в пространстве
         pieces[start.x][start.y].transform.position = TransformCoordinates(end.x, end.y);
+
+        //Переключение очерёдности хода
+        Turn = !Turn;
 
         //едим если занято вражеской фигурой
         if(pieces[end.x][end.y] != null && (pieces[end.x][end.y].team != pieces[start.x][start.y].team))
@@ -216,14 +225,11 @@ public class Board : MonoBehaviour
             pieces[start.x][start.y] = null;
         }
 
-        if(pieces[end.x][end.y].type == PieceType.progressor &&  // если ходил прогрессор
-            (pieces[end.x][end.y].team == false && (end.y == 6)) || (pieces[end.x][end.y].team == true && (end.y == 0) && (end.x%2 == 0))) //и он дошл до поля превращения
+        if((pieces[end.x][end.y].type == PieceType.progressor) &&  // если ходил прогрессор
+            ((pieces[end.x][end.y].team == false && (end.y == 6)) || (pieces[end.x][end.y].team == true && (end.y == 0) && (end.x%2 == 0)))) //и он дошёл до поля превращения
         {
             ProgressorTransformation(end.x, end.y, pieces[end.x][end.y].team); // то превращаем его
         }
-
-            
-
 
         //"рокировка"
         void Castling()
@@ -236,6 +242,7 @@ public class Board : MonoBehaviour
             pieces[end.x][end.y].y = end.y;
         }
 
+        //превращение прогрессора
         void ProgressorTransformation(int x, int y, bool team)
         {
             PieceType new_type;
