@@ -199,8 +199,21 @@ public class Board : MonoBehaviour
         Turn = !Turn;
 
         //едим если занято вражеской фигурой
-        if(pieces[end.x][end.y] != null && (pieces[end.x][end.y].team != pieces[start.x][start.y].team))
+        if (pieces[end.x][end.y] != null && (pieces[end.x][end.y].team != pieces[start.x][start.y].team))
+        {
             Destroy(pieces[end.x][end.y].GetComponent<MeshRenderer>());
+            if (pieces[start.x][start.y].HasIntellectorNearby()) //если рядом есть свой интеллектор
+            {   // то можно превратиться в съеденную фигуру
+                bool transformation;
+
+                try
+                { transformation = AskForTransformation();}
+                catch(NotImplementedException)
+                { transformation = true; }
+
+                if (transformation) TransformToEaten();
+            }
+        }
 
         //при ходе на свою фигуру
         if (pieces[end.x][end.y] != null && (pieces[end.x][end.y].team == pieces[start.x][start.y].team))
@@ -257,9 +270,22 @@ public class Board : MonoBehaviour
             Destroy(pieces[x][y].GetComponent<MeshRenderer>());
             pieces[x][y] = GenerateSinglePiece(new_type, team, x, y);
         }    
+         
+        //превращение в съеденную фигуру
+        void TransformToEaten()
+        {
+            PieceType new_type = pieces[end.x][end.y].type;
+            Destroy(pieces[start.x][start.y].GetComponent<MeshRenderer>());
+            pieces[start.x][start.y] = GenerateSinglePiece(new_type, pieces[start.x][start.y].team, end.x, end.y);
+        }
     }
 
     PieceType AskForPieceType()
+    {
+        throw new NotImplementedException();
+    }
+
+    bool AskForTransformation()
     {
         throw new NotImplementedException();
     }

@@ -16,5 +16,10 @@ public abstract class Piece : MonoBehaviour
     // Update is called once per frame
     void Update() { }
 
+    public bool HasIntellectorNearby()
+    {
+        return true;
+    }
+
     abstract public List<Vector2Int> GetAvaibleMooves();
 }
