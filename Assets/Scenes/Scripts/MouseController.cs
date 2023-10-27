@@ -20,6 +20,7 @@ public class MouseController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (board.game_over) return;
         if (!currentCamera)
         {
             currentCamera = Camera.main;
@@ -44,9 +45,5 @@ public class MouseController : MonoBehaviour
             Vector2Int hitPosition = board.LookUpTileIndex(info.transform.gameObject);
             board.SelectTile(hitPosition);
         }
-
-
     }
-
-    
 }

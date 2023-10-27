@@ -15,11 +15,19 @@ public class Board : MonoBehaviour
     [SerializeField] private Material WhiteTeamMaterial;
     [SerializeField] private Material BlackTeamMaterial;
 
-    public bool Turn;
-    private GameObject[][] tiles;
-    public Piece[][] pieces;
+    [Header("Network")]
+    [SerializeField] public bool NetworkGame;
+    [SerializeField] public bool PlayerTeam;
 
-    List<Vector2Int> AvaibleMoves;
+    public delegate void MoveDelegate(Vector2Int start, Vector2Int end);
+    public event MoveDelegate MoveEvent;
+
+    [NonSerialized] public bool Turn;
+    [NonSerialized] public bool game_over;
+    public Piece[][] pieces;
+    private GameObject[][] tiles;
+
+    private List<Vector2Int> AvaibleMoves;
 
     private Vector2Int currentHover  = -Vector2Int.one;
     private Vector2Int currentSelect = -Vector2Int.one;
@@ -37,6 +45,7 @@ public class Board : MonoBehaviour
         GenerateAllPieces();
 
         Turn = false;
+        game_over = false;
     }
 
     // Update is called once per frame
@@ -143,7 +152,7 @@ public class Board : MonoBehaviour
     }
     public void HoverTile(Vector2Int coordinates)
     {
-        Debug.Log($"{coordinates.x} {coordinates.y}");
+        //Debug.Log($"{coordinates.x} {coordinates.y}");
         currentHover = coordinates;
     }
     public void RemoveHover()
@@ -154,6 +163,8 @@ public class Board : MonoBehaviour
     //перемещение фигур
     public void SelectTile(Vector2Int coordinates)
     {
+        if (NetworkGame && (PlayerTeam != Turn)) return; //не трогаем чужие фигуры
+
         //если не выбрана никака€ фигура
         if (currentSelect == -Vector2Int.one)
             if((pieces[coordinates.x][coordinates.y] != null) && (pieces[coordinates.x][coordinates.y].team == Turn)) //если нажали на фигуру выбираем еЄ
@@ -177,9 +188,6 @@ public class Board : MonoBehaviour
                 if (AvaibleMoves.Contains(coordinates)) // и туда можно пойти, то идЄм туда
                 {
                     MovePiece(currentSelect, coordinates);
-
-                    //здесь должно быть событие
-
                     // и сбрасываем выделение
                     currentSelect = -Vector2Int.one;
                     AvaibleMoves = null;
@@ -202,7 +210,12 @@ public class Board : MonoBehaviour
         if (pieces[end.x][end.y] != null && (pieces[end.x][end.y].team != pieces[start.x][start.y].team))
         {
             Destroy(pieces[end.x][end.y].GetComponent<MeshRenderer>());
-            if (pieces[start.x][start.y].HasIntellectorNearby()) //если р€дом есть свой интеллектор
+            if(pieces[end.x][end.y].type == PieceType.intellector)
+            {
+                GameOver(pieces[start.x][start.y].team);
+            }
+
+            if (pieces[start.x][start.y].HasIntellectorNearby() && !game_over) //если р€дом есть свой интеллектор
             {   // то можно превратитьс€ в съеденную фигуру
                 bool transformation;
 
@@ -218,7 +231,7 @@ public class Board : MonoBehaviour
         //при ходе на свою фигуру
         if (pieces[end.x][end.y] != null && (pieces[end.x][end.y].team == pieces[start.x][start.y].team))
         {
-            if (    //если это дефенсор и интеллектор
+            if ( //если это дефенсор и интеллектор
                 (pieces[start.x][start.y].type == PieceType.intellector && pieces[end.x][end.y].type == PieceType.defensor) ||
                 (pieces[start.x][start.y].type == PieceType.defensor && pieces[end.x][end.y].type == PieceType.intellector)
                )
@@ -243,6 +256,9 @@ public class Board : MonoBehaviour
         {
             ProgressorTransformation(end.x, end.y, pieces[end.x][end.y].team); // то превращаем его
         }
+
+
+        MoveEvent?.Invoke(start , end);
 
         //"рокировка"
         void Castling()
@@ -280,6 +296,8 @@ public class Board : MonoBehaviour
         }
     }
 
+
+    //обращение к UI
     PieceType AskForPieceType()
     {
         throw new NotImplementedException();
@@ -288,5 +306,14 @@ public class Board : MonoBehaviour
     bool AskForTransformation()
     {
         throw new NotImplementedException();
+    }
+
+    void GameOver(bool winner)
+    {
+        Debug.Log((winner) ? "ѕќЅ≈ƒ»Ћ» „≈–Ќџ≈" : "ѕќЅ≈ƒ»Ћ» Ѕ≈Ћџ≈");
+        AvaibleMoves = null;
+        currentHover = -Vector2Int.one;
+        currentSelect = -Vector2Int.one;
+        game_over = true;
     }
 }
