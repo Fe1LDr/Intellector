@@ -135,6 +135,10 @@ public class Board : MonoBehaviour
         piece.x = x;
         piece.y = y;
         piece.transform.position = TransformCoordinates(x, y);
+        if((type == PieceType.agressor) && (team == true))
+        {
+            piece.transform.rotation = Quaternion.Euler(-90, 0, 0);
+        }
         piece.GetComponent<MeshRenderer>().materials = (team == true) ? new Material[]{ BlackTeamMaterial} : new Material[] { WhiteTeamMaterial };
         return piece;
     }
@@ -310,7 +314,7 @@ public class Board : MonoBehaviour
 
     void GameOver(bool winner)
     {
-        Debug.Log((winner) ? "онаедхкх вепмше" : "онаедхкх аекше");
+        Debug.Log((winner) ? "онаедхкх ме аекше" : "онаедхкх аекше");
         AvaibleMoves = null;
         currentHover = -Vector2Int.one;
         currentSelect = -Vector2Int.one;
