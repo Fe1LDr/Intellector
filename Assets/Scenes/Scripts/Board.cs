@@ -35,6 +35,7 @@ public class Board : MonoBehaviour
     private static float x_offset;
     private static float y_offset;
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -187,7 +188,7 @@ public class Board : MonoBehaviour
             {
                 if (AvaibleMoves.Contains(coordinates)) // и туда можно пойти, то идём туда
                 {
-                    MovePiece(currentSelect, coordinates);
+                    MovePiece(currentSelect, coordinates, false);
                     // и сбрасываем выделение
                     currentSelect = -Vector2Int.one;
                     AvaibleMoves = null;
@@ -195,7 +196,7 @@ public class Board : MonoBehaviour
             }
         }
     }
-    public void MovePiece(Vector2Int start, Vector2Int end)
+    public void MovePiece(Vector2Int start, Vector2Int end, bool received_move, int transform_info = -1)
     {
         //проверка очерёдности хода
         if (pieces[start.x][start.y].team != Turn) return;
@@ -219,10 +220,16 @@ public class Board : MonoBehaviour
             {   // то можно превратиться в съеденную фигуру
                 bool transformation;
 
-                try
-                { transformation = AskForTransformation();}
-                catch(NotImplementedException)
-                { transformation = true; }
+                //если ход получен по сети
+                if (received_move)
+                    transformation = Convert.ToBoolean(transform_info); //то узнаём было ли превращение из сообщения
+                else //а если этот ход делает игрок
+                {
+                    try //то спрашиваем его 
+                    { transformation = AskForTransformation(); }
+                    catch (NotImplementedException)
+                    { transformation = true; }
+                }
 
                 if (transformation) TransformToEaten();
             }
@@ -275,13 +282,18 @@ public class Board : MonoBehaviour
         void ProgressorTransformation(int x, int y, bool team)
         {
             PieceType new_type;
-            try
+            if (received_move)//если ход получен по сети
+                new_type = (PieceType)transform_info; //то узнаём в кого было превращение из сообщения
+            else//а если этот ход делает игрок
             {
-                new_type = AskForPieceType();
-            }
-            catch (NotImplementedException)
-            {
-                new_type = PieceType.dominator;
+                try // то спрашиваем у него в кого превращаться
+                {
+                    new_type = AskForPieceType();
+                }
+                catch (NotImplementedException)
+                {
+                    new_type = PieceType.dominator;
+                }
             }
             Destroy(pieces[x][y].GetComponent<MeshRenderer>());
             pieces[x][y] = GenerateSinglePiece(new_type, team, x, y);

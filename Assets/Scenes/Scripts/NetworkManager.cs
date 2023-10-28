@@ -5,6 +5,7 @@ using UnityEngine;
 public class NetworkManager : MonoBehaviour
 {
     [SerializeField] private Board board;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -16,8 +17,14 @@ public class NetworkManager : MonoBehaviour
 
     // Update is called once per frame
     void Update()
+    {    
+
+    }
+
+    void MoveReceived(Vector2Int start, Vector2Int end)
     {
-        
+        board.MovePiece(start, end, true);
+        Debug.Log($"Получен ход: {start} ; {end}");
     }
 
     void MoveEventHandler(Vector2Int start, Vector2Int end)
