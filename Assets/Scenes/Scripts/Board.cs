@@ -19,6 +19,10 @@ public class Board : MonoBehaviour
     [SerializeField] public bool NetworkGame;
     [SerializeField] public bool PlayerTeam;
 
+    [Header("UI")]
+    [SerializeField] GameObject Progressor_end;
+    [SerializeField] GameObject Around_Intellector;
+
     public delegate void MoveDelegate(Vector2Int start, Vector2Int end);
     public event MoveDelegate MoveEvent;
 
@@ -321,7 +325,7 @@ public class Board : MonoBehaviour
 
     bool AskForTransformation()
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException() ;
     }
 
     void GameOver(bool winner)

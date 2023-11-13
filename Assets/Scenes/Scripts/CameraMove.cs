@@ -20,7 +20,7 @@ public class CameraMove : MonoBehaviour
         }
         if (Input.GetMouseButtonDown(1))
         {
-            currentCamera.m_YAxis.m_MaxSpeed = 0;
+            currentCamera.m_YAxis.m_MaxSpeed = 10;
             currentCamera.m_XAxis.m_MaxSpeed = 1000;
         }
         if (Input.GetMouseButtonUp(1))
