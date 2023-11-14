@@ -325,7 +325,8 @@ public class Board : MonoBehaviour
 
     bool AskForTransformation()
     {
-        throw new NotImplementedException() ;
+        Around_Intellector.SetActive(true);
+        throw new NotImplementedException();
     }
 
     void GameOver(bool winner)

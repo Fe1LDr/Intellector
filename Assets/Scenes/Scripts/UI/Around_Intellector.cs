@@ -1,30 +1,48 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class Around_Intellector : MonoBehaviour
 {
 
-    bool answer;
+    public bool answer;
+
+    [SerializeField] GameObject yesButton;
+    [SerializeField] GameObject noButton;
+
     // Start is called before the first frame update
     void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    void Yes()
     {
         answer = true;
     }
 
-    void No()
+    // Update is called once per frame
+    void Awake()
     {
-        answer = false; 
+        GetAnswer(() =>
+        {
+            answer = true;
+            Debug.Log("Да");
+        }, () =>
+        {
+            answer = false;
+            Debug.Log("Нет");
+        });
+    }
+
+    public void GetAnswer(UnityAction yesAction, UnityAction noAction)
+    {
+        yesButton.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            gameObject.SetActive(false);
+            yesAction();
+        });
+        noButton.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            gameObject.SetActive(false);
+            noAction();
+        });
     }
 }
