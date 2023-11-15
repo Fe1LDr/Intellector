@@ -218,7 +218,7 @@ public class Board : MonoBehaviour
         //едим если занято вражеской фигурой
         if (pieces[end.x][end.y] != null && (pieces[end.x][end.y].team != pieces[start.x][start.y].team))
         {
-            if (pieces[start.x][start.y].HasIntellectorNearby() && !game_over) //если рядом есть свой интеллектор
+            if (pieces[start.x][start.y].HasIntellectorNearby() && (pieces[end.x][end.y].type != PieceType.intellector)) //если рядом есть свой интеллектор
             {   // то можно превратиться в съеденную фигуру
                 Around_Intellector.SetActive(true);
 
@@ -238,6 +238,20 @@ public class Board : MonoBehaviour
             }
         }
 
+        if ((pieces[start.x][start.y].type == PieceType.progressor) && !game_over && // если ходил прогрессор
+            ((pieces[start.x][start.y].team == false && (end.y == 6)) || (pieces[start.x][start.y].team == true && (end.y == 0) && (end.x % 2 == 0)))) //и он дошёл до поля превращения
+        {
+            Progressor_end.SetActive(true);
+
+            startAsk = start;
+            endAsk = end;
+
+            StartCoroutine(WaitForPieceType());
+            game_over = true;
+
+            return;
+        }
+
         //перемещение в пространстве
         pieces[start.x][start.y].transform.position = TransformCoordinates(end.x, end.y);
 
@@ -254,7 +268,6 @@ public class Board : MonoBehaviour
             else
                 throw new InvalidOperationException("Невозможный ход: ход на свою фигуру");
         }
-
         else
         {
             //изменение ссылок
@@ -262,12 +275,6 @@ public class Board : MonoBehaviour
             pieces[end.x][end.y].x = end.x;
             pieces[end.x][end.y].y = end.y;
             pieces[start.x][start.y] = null;
-        }
-
-        if((pieces[end.x][end.y].type == PieceType.progressor) &&  // если ходил прогрессор
-            ((pieces[end.x][end.y].team == false && (end.y == 6)) || (pieces[end.x][end.y].team == true && (end.y == 0) && (end.x%2 == 0)))) //и он дошёл до поля превращения
-        {
-            ProgressorTransformation(end.x, end.y, pieces[end.x][end.y].team); // то превращаем его
         }
 
 
@@ -285,24 +292,15 @@ public class Board : MonoBehaviour
         }
 
         //превращение прогрессора
-        void ProgressorTransformation(int x, int y, bool team)
+        void ProgressorTransformation()
         {
-            PieceType new_type;
-            if (received_move)//если ход получен по сети
-                new_type = (PieceType)transform_info; //то узнаём в кого было превращение из сообщения
-            else//а если этот ход делает игрок
-            {
-                try // то спрашиваем у него в кого превращаться
-                {
-                    new_type = AskForPieceType();
-                }
-                catch (NotImplementedException)
-                {
-                    new_type = PieceType.dominator;
-                }
-            }
-            Destroy(pieces[x][y].GetComponent<MeshRenderer>());
-            pieces[x][y] = GenerateSinglePiece(new_type, team, x, y);
+            PieceType new_type = (PieceType)Progressor_end.GetComponent<Progressor_end>().answer;
+
+            Destroy(pieces[startAsk.x][startAsk.y].GetComponent<MeshRenderer>());
+            Destroy(pieces[endAsk.x][endAsk.y].GetComponent<MeshRenderer>());
+
+            pieces[endAsk.x][endAsk.y] = GenerateSinglePiece(new_type, pieces[startAsk.x][startAsk.y].team, endAsk.x, endAsk.y);
+            pieces[startAsk.x][startAsk.y] = null;
         }    
          
         //превращение в съеденную фигуру
@@ -316,14 +314,11 @@ public class Board : MonoBehaviour
                 Destroy(pieces[endAsk.x][endAsk.y].GetComponent<MeshRenderer>());
 
                 pieces[endAsk.x][endAsk.y] = GenerateSinglePiece(new_type, pieces[startAsk.x][startAsk.y].team, endAsk.x, endAsk.y);
+                pieces[startAsk.x][startAsk.y] = null;
             }
             else
             {
                 Destroy(pieces[endAsk.x][endAsk.y].GetComponent<MeshRenderer>());
-                if (pieces[endAsk.x][endAsk.y].type == PieceType.intellector)
-                {
-                    GameOver(pieces[startAsk.x][startAsk.y].team);
-                }
 
                 //перемещение в пространстве
                 pieces[startAsk.x][startAsk.y].transform.position = TransformCoordinates(endAsk.x, endAsk.y);
@@ -345,13 +340,16 @@ public class Board : MonoBehaviour
             Around_Intellector.GetComponent<Around_Intellector>().answer = null;
             game_over = false;
         }
-    }
 
+        IEnumerator WaitForPieceType()
+        {
+            yield return new WaitUntil(() => !Progressor_end.activeInHierarchy);
 
-    //обращение к UI
-    PieceType AskForPieceType()
-    {
-        throw new NotImplementedException();
+            ProgressorTransformation();
+
+            Progressor_end.GetComponent<Progressor_end>().answer = null;
+            game_over = false;
+        }
     }
 
     void GameOver(bool winner)

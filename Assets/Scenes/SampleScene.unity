@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.87088907, g: 0.8559387, b: 0.8796502, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1327,7 +1327,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
+  m_Intensity: 0
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -2400,7 +2400,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c645526539c37c4db07e9ab4589799d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  answer: 0
   yesButton: {fileID: 1279681485}
   noButton: {fileID: 842366483}
 --- !u!1 &1093103410
@@ -3444,6 +3443,7 @@ GameObject:
   - component: {fileID: 1863262993}
   - component: {fileID: 1863262995}
   - component: {fileID: 1863262994}
+  - component: {fileID: 1863262996}
   m_Layer: 5
   m_Name: Progressor_end
   m_TagString: Untagged
@@ -3516,6 +3516,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1863262992}
   m_CullTransparentMesh: 1
+--- !u!114 &1863262996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1863262992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3910c81b14452284089fdc21df71f165, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DominatorButton: {fileID: 1574675340}
+  AgressorButton: {fileID: 126261916}
+  LiberatorButton: {fileID: 1331946783}
+  DefensorButton: {fileID: 1080729592}
 --- !u!1 &1914771282
 GameObject:
   m_ObjectHideFlags: 0
@@ -3822,7 +3838,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2142865513}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.1348796, y: 0.0047435206, z: -0.0043084356, w: 0.99084127}
+  m_LocalRotation: {x: -0.13487963, y: 0.0047435416, z: -0.004308454, w: 0.99084127}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
