@@ -7,7 +7,7 @@ using UnityEngine.Events;
 public class Around_Intellector : MonoBehaviour
 {
 
-    public bool answer;
+    public bool? answer;
 
     [SerializeField] GameObject yesButton;
     [SerializeField] GameObject noButton;
@@ -15,7 +15,7 @@ public class Around_Intellector : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        answer = true;
+        answer = null;
     }
 
     // Update is called once per frame
@@ -24,11 +24,9 @@ public class Around_Intellector : MonoBehaviour
         GetAnswer(() =>
         {
             answer = true;
-            Debug.Log("Да");
         }, () =>
         {
             answer = false;
-            Debug.Log("Нет");
         });
     }
 
