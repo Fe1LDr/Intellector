@@ -29,7 +29,7 @@ public class Board : MonoBehaviour
     [NonSerialized] public bool Turn;
     [NonSerialized] public bool game_over;
     public Piece[][] pieces;
-    private GameObject[][] tiles;
+    public GameObject[][] tiles;
 
     private List<Vector2Int> AvaibleMoves;
 
@@ -44,7 +44,7 @@ public class Board : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
+    public void Start()
     {
         x_offset = tileSize / Mathf.Sqrt(3) * 1.51f;
         y_offset = tileSize;
