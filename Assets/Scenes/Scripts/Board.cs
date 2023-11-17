@@ -215,6 +215,20 @@ public class Board : MonoBehaviour
         //Переключение очерёдности хода
         Turn = !Turn;
 
+        if ((pieces[start.x][start.y].type == PieceType.progressor) && // если ходил прогрессор
+            ((pieces[start.x][start.y].team == false && (end.y == 6)) || (pieces[start.x][start.y].team == true && (end.y == 0) && (end.x % 2 == 0)))) //и он дошёл до поля превращения
+        {
+            Progressor_end.SetActive(true);
+
+            startAsk = start;
+            endAsk = end;
+
+            StartCoroutine(WaitForPieceType());
+            game_over = true;
+
+            return;
+        }
+
         //едим если занято вражеской фигурой
         if (pieces[end.x][end.y] != null && (pieces[end.x][end.y].team != pieces[start.x][start.y].team))
         {
@@ -236,20 +250,6 @@ public class Board : MonoBehaviour
             {
                 GameOver(pieces[start.x][start.y].team);
             }
-        }
-
-        if ((pieces[start.x][start.y].type == PieceType.progressor) && !game_over && // если ходил прогрессор
-            ((pieces[start.x][start.y].team == false && (end.y == 6)) || (pieces[start.x][start.y].team == true && (end.y == 0) && (end.x % 2 == 0)))) //и он дошёл до поля превращения
-        {
-            Progressor_end.SetActive(true);
-
-            startAsk = start;
-            endAsk = end;
-
-            StartCoroutine(WaitForPieceType());
-            game_over = true;
-
-            return;
         }
 
         //перемещение в пространстве
@@ -297,7 +297,12 @@ public class Board : MonoBehaviour
             PieceType new_type = (PieceType)Progressor_end.GetComponent<Progressor_end>().answer;
 
             Destroy(pieces[startAsk.x][startAsk.y].GetComponent<MeshRenderer>());
-            Destroy(pieces[endAsk.x][endAsk.y].GetComponent<MeshRenderer>());
+
+            if(pieces[endAsk.x][endAsk.y] != null)
+                Destroy(pieces[endAsk.x][endAsk.y].GetComponent<MeshRenderer>());
+             
+
+            // works, but looks weird
 
             pieces[endAsk.x][endAsk.y] = GenerateSinglePiece(new_type, pieces[startAsk.x][startAsk.y].team, endAsk.x, endAsk.y);
             pieces[startAsk.x][startAsk.y] = null;
