@@ -10,14 +10,13 @@ public class Board : MonoBehaviour
     [SerializeField] private GameObject[] piecesPrefabs;
     [SerializeField] private float tileSize;
 
-
     [Header("Materials")]
     [SerializeField] private Material WhiteTeamMaterial;
     [SerializeField] private Material BlackTeamMaterial;
 
     [Header("Network")]
     [SerializeField] public bool NetworkGame;
-    [SerializeField] public bool PlayerTeam;
+    [NonSerialized] public bool PlayerTeam;
 
     [Header("UI")]
     [SerializeField] GameObject Progressor_end;
@@ -35,6 +34,8 @@ public class Board : MonoBehaviour
 
     private Vector2Int currentHover  = -Vector2Int.one;
     private Vector2Int currentSelect = -Vector2Int.one;
+    private Vector2Int lustMove1 = -Vector2Int.one;
+    private Vector2Int lustMove2 = -Vector2Int.one;
 
     private static float x_offset;
     private static float y_offset;
@@ -42,9 +43,7 @@ public class Board : MonoBehaviour
     private Vector2Int startAsk;
     private Vector2Int endAsk;
 
-
-    // Start is called before the first frame update
-    public void Start()
+    public void Awake()
     {
         x_offset = tileSize / Mathf.Sqrt(3) * 1.51f;
         y_offset = tileSize;
@@ -56,7 +55,6 @@ public class Board : MonoBehaviour
         game_over = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
         for (int i = 0; i < 9; i++)
@@ -73,6 +71,8 @@ public class Board : MonoBehaviour
                 }
                 else if(coor == currentHover)
                     tiles[coor.x][coor.y].layer = LayerMask.NameToLayer("HoverTile");
+                else if (coor == lustMove1 || coor == lustMove2)
+                    tiles[coor.x][coor.y].layer = LayerMask.NameToLayer("SelectedTile");
                 else
                     tiles[coor.x][coor.y].layer = LayerMask.NameToLayer("Tile");
 
@@ -164,7 +164,6 @@ public class Board : MonoBehaviour
     }
     public void HoverTile(Vector2Int coordinates)
     {
-        //Debug.Log($"{coordinates.x} {coordinates.y}");
         currentHover = coordinates;
     }
     public void RemoveHover()
@@ -199,10 +198,11 @@ public class Board : MonoBehaviour
             {
                 if (AvaibleMoves.Contains(coordinates)) // и туда можно пойти, то идём туда
                 {
-                    MovePiece(currentSelect, coordinates, false);
                     // и сбрасываем выделение
+                    var select_buff = currentSelect;
                     currentSelect = -Vector2Int.one;
                     AvaibleMoves = null;
+                    MovePiece(select_buff, coordinates, false);
                 }
             }
         }
@@ -214,6 +214,10 @@ public class Board : MonoBehaviour
 
         //Переключение очерёдности хода
         Turn = !Turn;
+
+        //Сохранение последнего хода
+        lustMove1 = start;
+        lustMove2 = end;
 
         if ((pieces[start.x][start.y].type == PieceType.progressor) && // если ходил прогрессор
             ((pieces[start.x][start.y].team == false && (end.y == 6)) || (pieces[start.x][start.y].team == true && (end.y == 0) && (end.x % 2 == 0)))) //и он дошёл до поля превращения
@@ -277,8 +281,10 @@ public class Board : MonoBehaviour
             pieces[start.x][start.y] = null;
         }
 
-
-        MoveEvent?.Invoke(start , end);
+        if (!received_move)
+        {
+            MoveEvent?.Invoke(start, end);
+        }
 
         //"рокировка"
         void Castling()

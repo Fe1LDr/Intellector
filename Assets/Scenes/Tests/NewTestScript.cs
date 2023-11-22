@@ -11,7 +11,7 @@ public class NewTestScript {
     {
         GameObject gameGameObject = MonoBehaviour.Instantiate(Resources.Load<GameObject>("Board"));
         board = gameGameObject.GetComponent<Board>();
-        board.Start();
+        board.Awake();
     }
 
     [UnityTest]
