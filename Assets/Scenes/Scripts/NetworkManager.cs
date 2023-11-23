@@ -13,14 +13,14 @@ public class NetworkManager : MonoBehaviour
     NetworkStream stream;
 
 
-    byte[] ReceivedMoveBytes = new byte[4];
+    byte[] ReceivedMoveBytes = new byte[5];
     const string LogFilePath = "log.txt";
 
     void Start()
     {
         if (board.NetworkGame)
         {
-            client = new TcpClient("192.168.1.6", 7000);
+            client = new TcpClient("192.168.1.5", 7000);
             byte[] SentByClientBytes = new byte[1] { 1 };
             stream = client.GetStream();
 
@@ -57,28 +57,28 @@ public class NetworkManager : MonoBehaviour
     {
         Vector2Int start = new Vector2Int(ReceivedMoveBytes[0], ReceivedMoveBytes[1]);
         Vector2Int end = new Vector2Int(ReceivedMoveBytes[2], ReceivedMoveBytes[3]);
-        Debug.Log($"Получен ход: {start} ; {end}");
+        int transform_info = ReceivedMoveBytes[4];
+        Debug.Log($"Получен ход: {start} ; {end}, {transform_info}");
         using (StreamWriter LogStream = new StreamWriter(LogFilePath, true))
         {
-            LogStream.WriteLine($"Получен ход: {start} ; {end}");
-            board.MovePiece(start, end, true);
+            LogStream.WriteLine($"Получен ход: {start} ; {end}, {transform_info}");
+            board.MovePiece(start, end, true, transform_info);
         }  
     }
 
-    void MoveEventHandler(Vector2Int start, Vector2Int end)
+    void MoveEventHandler(Vector2Int start, Vector2Int end, int transform_info)
     {
-        byte[] MoveBytes = new byte[4] { (byte)start.x, (byte)start.y, (byte)end.x, (byte)end.y };
-        stream.Write(MoveBytes, 0, 4);
+        byte[] MoveBytes = new byte[5] { (byte)start.x, (byte)start.y, (byte)end.x, (byte)end.y, (byte)transform_info };
+        stream.Write(MoveBytes, 0, 5);
         Debug.Log($"Отправка хода {start} ; {end}");
         using (StreamWriter LogStream = new StreamWriter(LogFilePath, true)) { LogStream.WriteLine($"Отправка хода {start} ; {end}"); }
-        //ReceiveMove();
     }
 
     void ListenToServer()
     {
         while (true)
         {
-            stream.Read(ReceivedMoveBytes, 0, 4);
+            stream.Read(ReceivedMoveBytes, 0, 5);
             ReceiveMove();
         }      
     }
