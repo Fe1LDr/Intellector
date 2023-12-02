@@ -20,7 +20,7 @@ public class NetworkManager : MonoBehaviour
     {
         if (board.NetworkGame)
         {
-            client = new TcpClient("194.87.145.41", 7000);
+            client = new TcpClient("194.87.235.152", 7000);
             byte[] SentByClientBytes = new byte[1] { 1 };
             stream = client.GetStream();
 
