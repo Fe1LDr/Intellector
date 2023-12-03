@@ -21,6 +21,7 @@ public class Board : MonoBehaviour
     [Header("UI")]
     [SerializeField] GameObject Progressor_end;
     [SerializeField] GameObject Around_Intellector;
+    [SerializeField] GameObject EndGame;
 
     public delegate void MoveDelegate(Vector2Int start, Vector2Int end, int transform_info);
     public event MoveDelegate MoveEvent;
@@ -354,5 +355,6 @@ public class Board : MonoBehaviour
         currentHover = -Vector2Int.one;
         currentSelect = -Vector2Int.one;
         game_over = true;
+        EndGame.SetActive(true);
     }
 }
