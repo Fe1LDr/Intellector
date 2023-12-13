@@ -835,7 +835,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 0.9433962, g: 0.81564915, b: 0.4672481, a: 1}
-  m_Intensity: 0.2
+  m_Intensity: 10
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -2380,18 +2380,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 958176781406646849, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
-      propertyPath: EndGame
-      value: 
-      objectReference: {fileID: 1207456716}
-    - target: {fileID: 958176781406646849, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
-      propertyPath: PlayerTeam
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 958176781406646849, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
-      propertyPath: NetworkGame
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 958176781406646849, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
       propertyPath: EndGameBlack
       value: 
       objectReference: {fileID: 1207456716}
@@ -2404,41 +2392,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1455569441}
     - target: {fileID: 958176781406646849, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
-      propertyPath: BlackTeamMaterial
-      value: 
-      objectReference: {fileID: 2100000, guid: fd50e7ba1627d6f4693e3cf0b522959c, type: 2}
-    - target: {fileID: 958176781406646849, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
-      propertyPath: WhiteTeamMaterial
-      value: 
-      objectReference: {fileID: 2100000, guid: 9ef7b536869286748b268490b0151408, type: 2}
-    - target: {fileID: 958176781406646849, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
       propertyPath: Around_Intellector
       value: 
       objectReference: {fileID: 1799026968}
-    - target: {fileID: 958176781406646849, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
-      propertyPath: piecesPrefabs.Array.data[0]
-      value: 
-      objectReference: {fileID: 5205973718310583964, guid: 79ae33d1428e7aa4b8454b50e76876f0, type: 3}
-    - target: {fileID: 958176781406646849, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
-      propertyPath: piecesPrefabs.Array.data[1]
-      value: 
-      objectReference: {fileID: 1123189808457350255, guid: 4880204f63b10ce4ab9e81c4ba25d506, type: 3}
-    - target: {fileID: 958176781406646849, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
-      propertyPath: piecesPrefabs.Array.data[2]
-      value: 
-      objectReference: {fileID: 2108930679175976022, guid: a1a690b649915ad4d8713bac7652c08d, type: 3}
-    - target: {fileID: 958176781406646849, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
-      propertyPath: piecesPrefabs.Array.data[3]
-      value: 
-      objectReference: {fileID: 6519792706112887177, guid: 1b1354960f7c53546ab0aa27a6e70a08, type: 3}
-    - target: {fileID: 958176781406646849, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
-      propertyPath: piecesPrefabs.Array.data[4]
-      value: 
-      objectReference: {fileID: 2059179039141518608, guid: 2ad1a09531a487648acf2b5dc0fa7f04, type: 3}
-    - target: {fileID: 958176781406646849, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
-      propertyPath: piecesPrefabs.Array.data[5]
-      value: 
-      objectReference: {fileID: 7853700468708186478, guid: 3d9adf4d7522174448dbc8075e1f729b, type: 3}
     - target: {fileID: 2766550668456794340, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
       propertyPath: m_Name
       value: Board
@@ -2571,7 +2527,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3902920658884216914, guid: b42a0f3540fec214d8747d57a4b589c9, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 3.103
+      value: 3.1030273
       objectReference: {fileID: 0}
     - target: {fileID: 3902920658884216914, guid: b42a0f3540fec214d8747d57a4b589c9, type: 3}
       propertyPath: m_AnchoredPosition.y
