@@ -17,6 +17,7 @@ public class Board : MonoBehaviour
     [Header("UI")]
     [SerializeField] GameObject Progressor_end;
     [SerializeField] GameObject Around_Intellector;
+    [SerializeField] GameObject EndGame;
 
     [NonSerialized] public bool NetworkGame;
     [NonSerialized] public bool PlayerTeam;
@@ -356,5 +357,6 @@ public class Board : MonoBehaviour
         currentHover = -Vector2Int.one;
         currentSelect = -Vector2Int.one;
         game_over = true;
+        EndGame.SetActive(true);
     }
 }
