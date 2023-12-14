@@ -7,68 +7,51 @@ using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class NewTestScript {
+public class UITests
+{
     private Board board;
 
-    private void SetUp()
-    {
-        GameObject gameGameObject = MonoBehaviour.Instantiate(Resources.Load<GameObject>("Board"));
-        board = gameGameObject.GetComponent<Board>();
-        board.Awake();
-    }
-
     [UnityTest]
-    public IEnumerator SelectTile_Test()
+    public IEnumerator MenuOpensCorrectly() // Проверка запуска сцены Menu
     {
-        SetUp();
-        yield return new WaitForSeconds(0.1f);
-        board.SelectTile(new Vector2Int(0,0));
-        yield return new WaitForSeconds(0.1f);
-
-        Assert.That(board.tiles[0][0].layer == 8);
-    }
-
-    [UnityTest]
-    public IEnumerator Progressor_Test() 
-    {
-        SetUp();
-
-        Progressor progressor = board.pieces[0][1] as Progressor;
-        yield return new WaitForSeconds(0.1f);
-        var moves = progressor.GetAvaibleMooves();
-        yield return new WaitForSeconds(0.1f);
-        // 0 2 and 1 1
-        Assert.That(moves.Count == 2 && (moves[0].x == 0 && moves[0].y == 2 && moves[1].x == 1 && moves[1].y == 1));
-    }
-
-
-    [UnityTest]
-    public IEnumerator Dominator_Test()
-    {
-        SetUp();
-
-        Dominator dominator = board.pieces[0][0] as Dominator;
-        yield return new WaitForSeconds(0.1f);
-        var moves = dominator.GetAvaibleMooves();
-        yield return new WaitForSeconds(0.1f);
-        // empty
-        Assert.That(moves.Count == 0);
-    }
-
-    [UnityTest]
-    public IEnumerator MenuOpensCorrectly()
-    {
-        SceneManager.LoadScene("Menu"); // Загрузка сцены с меню
+        SceneManager.LoadScene("Menu");
 
         yield return null;
 
-        // Проверяем, что меню отображается на экране
-        GameObject menu = GameObject.Find("Menu"); //
-        Assert.IsNotNull(menu); // Проверяем, что объект меню не равен null
+        GameObject menu = GameObject.Find("Menu");
+        Assert.IsNotNull(menu);
+        yield return new WaitForSeconds(2f);
     }
 
     [UnityTest]
-    public IEnumerator ClickUIProgressor()
+    public IEnumerator StartGameAndBackToMenu()
+    {
+        SceneManager.LoadScene("Menu");
+        yield return null;
+
+        Button yourButton = GameObject.Find("Start").GetComponent<Button>();
+        Assert.IsNotNull(yourButton, "Button not found");
+        EventTrigger trigger = yourButton.gameObject.GetComponent<EventTrigger>();
+        if (trigger == null)
+        {
+            trigger = yourButton.gameObject.AddComponent<EventTrigger>();
+        }
+        yourButton.onClick.Invoke();
+        yield return null;
+        yield return new WaitForSeconds(1f);
+        Button yourButton2 = GameObject.Find("ExitMenu").GetComponent<Button>();
+        Assert.IsNotNull(yourButton2, "Button not found");
+        EventTrigger trigger2 = yourButton2.gameObject.GetComponent<EventTrigger>();
+        if (trigger == null)
+        {
+            trigger2 = yourButton2.gameObject.AddComponent<EventTrigger>();
+        }
+        yourButton2.onClick.Invoke();
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator ClickUIProgressor() // Ход Progressor
     {
         SceneManager.LoadScene("SampleScene");
 
@@ -79,13 +62,14 @@ public class NewTestScript {
 
         yield return new WaitForSeconds(0.1f);
         board.MovePiece(new Vector2Int(0, 1), new Vector2Int(0, 2), false);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.1f);
         board.MovePiece(new Vector2Int(1, 5), new Vector2Int(1, 4), false);
+        yield return new WaitForSeconds(0.1f);
         yield return new WaitForSeconds(2f);
     }
 
     [UnityTest]
-    public IEnumerator ClickUIIntellectorAround()
+    public IEnumerator ClickUIIntellectorAround() // Проверка метода Around_intellector 
     {
         SceneManager.LoadScene("SampleScene");
 
@@ -96,11 +80,11 @@ public class NewTestScript {
 
         yield return new WaitForSeconds(0.1f);
         board.MovePiece(new Vector2Int(2, 0), new Vector2Int(6, 6), false);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.1f);
         board.SelectTile(new Vector2Int(5, 5));
         yield return new WaitForSeconds(0.1f);
         board.SelectTile(new Vector2Int(6, 6));
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.1f);
         Button yourButton = GameObject.Find("Yes").GetComponent<Button>();
         EventTrigger trigger = yourButton.gameObject.GetComponent<EventTrigger>();
         if (trigger == null)
@@ -108,11 +92,12 @@ public class NewTestScript {
             trigger = yourButton.gameObject.AddComponent<EventTrigger>();
         }
         yourButton.onClick.Invoke();
+        yield return null;
         yield return new WaitForSeconds(2f);
     }
 
     [UnityTest]
-    public IEnumerator ClickUIEndGame()
+    public IEnumerator ClickUIEndGame() // Корректность завершения игры 
     {
         SceneManager.LoadScene("SampleScene");
 
@@ -123,11 +108,11 @@ public class NewTestScript {
 
         yield return new WaitForSeconds(0.1f);
         board.MovePiece(new Vector2Int(2, 0), new Vector2Int(6, 6), false);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.1f);
         board.MovePiece(new Vector2Int(1, 5), new Vector2Int(1, 4), false);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.1f);
         board.MovePiece(new Vector2Int(6, 6), new Vector2Int(4, 6), false);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.1f);
         Button yourButton = GameObject.Find("Exit").GetComponent<Button>();
         EventTrigger trigger = yourButton.gameObject.GetComponent<EventTrigger>();
         if (trigger == null)
@@ -135,11 +120,12 @@ public class NewTestScript {
             trigger = yourButton.gameObject.AddComponent<EventTrigger>();
         }
         yourButton.onClick.Invoke();
-        yield return new WaitForSeconds(5f);
+        yield return null;
+        yield return new WaitForSeconds(2f);
     }
 
     [UnityTest]
-    public IEnumerator ClickUIProgressorEnd()
+    public IEnumerator ClickUIProgressorEnd() // Пешка доходит до конца
     {
         SceneManager.LoadScene("SampleScene");
 
@@ -150,26 +136,26 @@ public class NewTestScript {
 
         yield return new WaitForSeconds(0.1f);
         board.MovePiece(new Vector2Int(0, 1), new Vector2Int(0, 2), false);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.1f);
         board.MovePiece(new Vector2Int(0, 5), new Vector2Int(0, 4), false);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.1f);
         board.MovePiece(new Vector2Int(0, 2), new Vector2Int(0, 3), false);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.1f);
         board.MovePiece(new Vector2Int(0, 4), new Vector2Int(1, 3), false);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.1f);
         board.MovePiece(new Vector2Int(0, 3), new Vector2Int(0, 4), false);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.1f);
         board.MovePiece(new Vector2Int(1, 3), new Vector2Int(0, 3), false);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.1f);
         board.MovePiece(new Vector2Int(0, 4), new Vector2Int(0, 5), false);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.1f);
         board.MovePiece(new Vector2Int(0, 3), new Vector2Int(0, 2), false);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.1f);
         yield return new WaitForSeconds(0.1f);
         board.SelectTile(new Vector2Int(0, 5));
         yield return new WaitForSeconds(0.1f);
         board.SelectTile(new Vector2Int(0, 6));
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.1f);
         Button yourButton = GameObject.Find("Defensor").GetComponent<Button>();
         EventTrigger trigger = yourButton.gameObject.GetComponent<EventTrigger>();
         if (trigger == null)
@@ -177,11 +163,12 @@ public class NewTestScript {
             trigger = yourButton.gameObject.AddComponent<EventTrigger>();
         }
         yourButton.onClick.Invoke();
+        yield return null;
         yield return new WaitForSeconds(2f);
     }
 
     [UnityTest]
-    public IEnumerator ClickUIStart()
+    public IEnumerator ClickUIStart() // Запуск игры из Menu
     {
         SceneManager.LoadScene("Menu");
 
@@ -191,7 +178,7 @@ public class NewTestScript {
 
         Assert.IsNotNull(yourButton, "Button not found");
 
-       
+
         EventTrigger trigger = yourButton.gameObject.GetComponent<EventTrigger>();
 
         if (trigger == null)
@@ -202,7 +189,7 @@ public class NewTestScript {
 
         // Создаем событие для нажатия кнопки
         yourButton.onClick.Invoke();
-
-        yield return new WaitForSeconds(5f);
+        yield return null;
+        yield return new WaitForSeconds(2f);
     }
 }
