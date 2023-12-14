@@ -14,13 +14,12 @@ public class Board : MonoBehaviour
     [SerializeField] private Material WhiteTeamMaterial;
     [SerializeField] private Material BlackTeamMaterial;
 
-    [Header("Network")]
-    [SerializeField] public bool NetworkGame;
-    [NonSerialized] public bool PlayerTeam;
-
     [Header("UI")]
     [SerializeField] GameObject Progressor_end;
     [SerializeField] GameObject Around_Intellector;
+
+    [NonSerialized] public bool NetworkGame;
+    [NonSerialized] public bool PlayerTeam;
 
     public delegate void MoveDelegate(Vector2Int start, Vector2Int end, int transform_info);
     public event MoveDelegate MoveEvent;
@@ -52,6 +51,9 @@ public class Board : MonoBehaviour
 
         Turn = false;
         game_over = false;
+
+        Settings settings = Settings.Load();
+        NetworkGame = settings.NetworkGame;
     }
 
     void Update()

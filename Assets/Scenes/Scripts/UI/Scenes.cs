@@ -14,4 +14,11 @@ public class Scenes : MonoBehaviour
     {
         Application.Quit();
     }
+    public void StartGame(bool network)
+    {
+        Settings settings = Settings.Load();
+        settings.NetworkGame = network;
+        settings.Save();
+        ChangeScenes(1);
+    }
 }

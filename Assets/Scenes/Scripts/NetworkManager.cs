@@ -18,15 +18,16 @@ public class NetworkManager : MonoBehaviour
 
     void Start()
     {
-        if (board.NetworkGame)
+        Settings settings = Settings.Load();
+        if (settings.NetworkGame)
         {
-            client = new TcpClient("194.87.235.152", 7000);
-            byte[] SentByClientBytes = new byte[1] { 1 };
+            //string local_ip = "192.168.1.5";
+            //string server_ip = "194.87.235.152";
+            client = new TcpClient(settings.ServerIP, 7000);           
             stream = client.GetStream();
 
             Debug.Log("Подключение к серверу");
-            using (StreamWriter LogStream = new StreamWriter(LogFilePath)) { LogStream.WriteLine("Подключение к серверу"); }
-            stream.Write(SentByClientBytes, 0, 1);
+            using (StreamWriter LogStream = new StreamWriter(LogFilePath)) { LogStream.WriteLine("Подключение к серверу"); }         
 
             Debug.Log("Поиск игры");
             using (StreamWriter LogStream = new StreamWriter(LogFilePath, true)) { LogStream.WriteLine("Поиск игры"); }
@@ -81,5 +82,12 @@ public class NetworkManager : MonoBehaviour
             stream.Read(ReceivedMoveBytes, 0, 5);
             ReceiveMove();
         }      
+    }
+
+    public void SendExit()
+    {
+        byte[] exit = new byte[5] { 111, 0, 0, 0, 0 };
+        stream.Write(exit, 0, 5);
+        stream.Close();
     }
 }
