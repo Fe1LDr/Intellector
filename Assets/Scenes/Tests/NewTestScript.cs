@@ -60,29 +60,23 @@ public class NewTestScript {
     {
         SceneManager.LoadScene("Menu"); // Загрузка сцены с меню
 
-        yield return null; // Ждем один кадр, чтобы сцена загрузилась полностью
+        yield return null;
 
         // Проверяем, что меню отображается на экране
-        GameObject menu = GameObject.Find("Menu"); // Предположим, что Canvas, содержащий меню, имеет имя "MenuCanvas"
+        GameObject menu = GameObject.Find("Menu"); //
         Assert.IsNotNull(menu); // Проверяем, что объект меню не равен null
     }
 
     [UnityTest]
     public IEnumerator ClickUIProgressor()
     {
-        // Загрузка сцены с вашим UI
         SceneManager.LoadScene("SampleScene");
 
-        yield return null; // Ждем один кадр, чтобы сцена загрузилась полностью
+        yield return null;
 
-        // Находим кнопку в сцене (предположим, что кнопка имеет тег "UIButton")
         GameObject gameGameObject = GameObject.Find("Board");
         board = gameGameObject.GetComponent<Board>();
 
-        /*yield return new WaitForSeconds(0.1f);
-        board.SelectTile(new Vector2Int(0, 1));
-        yield return new WaitForSeconds(0.1f);
-        board.SelectTile(new Vector2Int(0, 2));*/
         yield return new WaitForSeconds(0.1f);
         board.MovePiece(new Vector2Int(0, 1), new Vector2Int(0, 2), false);
         yield return new WaitForSeconds(2f);
@@ -93,12 +87,10 @@ public class NewTestScript {
     [UnityTest]
     public IEnumerator ClickUIIntellectorAround()
     {
-        // Загрузка сцены с вашим UI
         SceneManager.LoadScene("SampleScene");
 
-        yield return null; // Ждем один кадр, чтобы сцена загрузилась полностью
+        yield return null;
 
-        // Находим кнопку в сцене (предположим, что кнопка имеет тег "UIButton")
         GameObject gameGameObject = GameObject.Find("Board");
         board = gameGameObject.GetComponent<Board>();
 
@@ -122,12 +114,10 @@ public class NewTestScript {
     [UnityTest]
     public IEnumerator ClickUIEndGame()
     {
-        // Загрузка сцены с вашим UI
         SceneManager.LoadScene("SampleScene");
 
-        yield return null; // Ждем один кадр, чтобы сцена загрузилась полностью
+        yield return null;
 
-        // Находим кнопку в сцене (предположим, что кнопка имеет тег "UIButton")
         GameObject gameGameObject = GameObject.Find("Board");
         board = gameGameObject.GetComponent<Board>();
 
@@ -151,19 +141,17 @@ public class NewTestScript {
     [UnityTest]
     public IEnumerator ClickUIProgressorEnd()
     {
-        // Загрузка сцены с вашим UI
         SceneManager.LoadScene("SampleScene");
 
-        yield return null; // Ждем один кадр, чтобы сцена загрузилась полностью
+        yield return null;
 
-        // Находим кнопку в сцене (предположим, что кнопка имеет тег "UIButton")
         GameObject gameGameObject = GameObject.Find("Board");
         board = gameGameObject.GetComponent<Board>();
 
         yield return new WaitForSeconds(0.1f);
-        board.MovePiece(new Vector2Int(0, 1), new Vector2Int(0, 5), false);
+        board.MovePiece(new Vector2Int(0, 1), new Vector2Int(0, 2), false);
         yield return new WaitForSeconds(2f);
-        board.MovePiece(new Vector2Int(0, 5), new Vector2Int(0, 2), false);
+        board.MovePiece(new Vector2Int(0, 5), new Vector2Int(0, 4), false);
         yield return new WaitForSeconds(2f);
         board.MovePiece(new Vector2Int(0, 2), new Vector2Int(0, 3), false);
         yield return new WaitForSeconds(2f);
@@ -189,23 +177,21 @@ public class NewTestScript {
             trigger = yourButton.gameObject.AddComponent<EventTrigger>();
         }
         yourButton.onClick.Invoke();
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(2f);
     }
 
     [UnityTest]
     public IEnumerator ClickUIStart()
     {
-        // Загрузка сцены с вашим UI
         SceneManager.LoadScene("Menu");
 
-        yield return null; // Ждем один кадр, чтобы сцена загрузилась полностью
+        yield return null;
 
-        // Находим кнопку в сцене (предположим, что кнопка имеет тег "UIButton")
         Button yourButton = GameObject.Find("Start").GetComponent<Button>();
 
         Assert.IsNotNull(yourButton, "Button not found");
 
-        // Создаем экземпляр EventTrigger для симуляции нажатия кнопки
+       
         EventTrigger trigger = yourButton.gameObject.GetComponent<EventTrigger>();
 
         if (trigger == null)
@@ -217,8 +203,6 @@ public class NewTestScript {
         // Создаем событие для нажатия кнопки
         yourButton.onClick.Invoke();
 
-        // Ждем один кадр, чтобы событие успело обработаться
-        yield return new WaitForSeconds(1f);
         yield return new WaitForSeconds(5f);
     }
 }
