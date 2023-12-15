@@ -94,6 +94,7 @@ public class UITests
         yourButton.onClick.Invoke();
         yield return null;
         yield return new WaitForSeconds(2f);
+        Assert.AreEqual(board.pieces[6][6].type, PieceType.agressor);
     }
 
     [UnityTest]
@@ -165,6 +166,7 @@ public class UITests
         yourButton.onClick.Invoke();
         yield return null;
         yield return new WaitForSeconds(2f);
+        Assert.AreEqual(board.pieces[0][6].type, PieceType.defensor);
     }
 
     [UnityTest]

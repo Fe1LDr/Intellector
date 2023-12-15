@@ -21,7 +21,7 @@ public class UnitTests {
     }
 
     [UnityTest]
-    public IEnumerator SelectTileTest()
+    public IEnumerator SelectTileTest() // +
     {
         SetUp();
         yield return new WaitForSeconds(0.1f);
@@ -32,7 +32,18 @@ public class UnitTests {
     }
 
     [UnityTest]
-    public IEnumerator ProgressorAvailibaleMovesTest() 
+    public IEnumerator HoverTileTest() // +
+    {
+        SetUp();
+        yield return new WaitForSeconds(0.1f);
+        board.HoverTile(new Vector2Int(0, 0));
+        yield return new WaitForSeconds(0.1f);
+
+        Assert.That(board.tiles[0][0].layer == 7);
+    }
+
+    [UnityTest]
+    public IEnumerator ProgressorAvailibaleMovesTest()  // +
     {
         SetUp();
 
@@ -46,7 +57,7 @@ public class UnitTests {
 
 
     [UnityTest]
-    public IEnumerator DominatorNoMovesTest()
+    public IEnumerator DominatorNoMovesTest() // +
     {
         SetUp();
 
@@ -59,7 +70,7 @@ public class UnitTests {
     }
 
     [UnityTest]
-    public IEnumerator IntellectorCastlingTest()
+    public IEnumerator IntellectorCastlingTest() // +
     {
         SetUp();
 
@@ -74,16 +85,35 @@ public class UnitTests {
     }
 
     [UnityTest]
-    public IEnumerator Test()
+    public IEnumerator LiberatorMoveTest() // +
     {
-        GameObject gameGameObject = MonoBehaviour.Instantiate(Resources.Load<GameObject>("Board"));
-        board = gameGameObject.GetComponent<Board>();
-        yield return null;
-        Piece piece = board.GenerateSinglePiece(PieceType.intellector, false, 1000, -1000);
-        yield return null;
+        SetUp();
+        Liberator liberator = board.pieces[1][0] as Liberator;
+        yield return new WaitForSeconds(0.1f);
+        board.SelectTile(new Vector2Int(1, 0));
+        yield return new WaitForSeconds(0.1f);
+        board.SelectTile(new Vector2Int(1, 2));
+        yield return new WaitForSeconds(0.1f);
 
-        PieceType result = piece.type;
-        Assert.AreEqual(result, PieceType.intellector);
+        PieceType result = board.pieces[1][2].type;
+        Assert.AreEqual(result, PieceType.liberator);
+        Assert.AreEqual(liberator.x, 1);
+        Assert.AreEqual(liberator.y, 2);
+    }
+
+    [UnityTest]
+    public IEnumerator LiberatorUnavailibleMoveTest() // +
+    {
+        SetUp();
+        Liberator liberator = board.pieces[1][0] as Liberator;
+        yield return new WaitForSeconds(0.1f);
+        board.SelectTile(new Vector2Int(1, 0));
+        yield return new WaitForSeconds(0.1f);
+        board.SelectTile(new Vector2Int(2, 5));
+        yield return new WaitForSeconds(0.1f);
+
+        Assert.AreEqual(liberator.x, 1);
+        Assert.AreEqual(liberator.y, 0);
     }
 
     [UnityTest]
@@ -156,6 +186,8 @@ public class UnitTests {
 
         PieceType result = piece.type;
         Assert.AreEqual(result, PieceType.dominator);
+        Assert.AreEqual(piece.x, 8);
+        Assert.AreEqual(piece.y, 0);
     }
 
     [UnityTest]
