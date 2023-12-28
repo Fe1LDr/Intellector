@@ -8,16 +8,22 @@ public class Settings
 {
     [field: NonSerialized]
     public static string config_file_path = "config.bin";
+    public static string server_ip = "194.87.235.152";
 
     public string ServerIP { get; set; }
+    public uint Game_ID_To_Connect { get; set; }
     public bool NetworkGame { get; set; }
+    
+    public string UserName { get; set; }
     public string Material { get; set; }
 
     public Settings()
     {
-        ServerIP = "194.87.235.152";
+        ServerIP = server_ip;
+        Game_ID_To_Connect = 0;
         NetworkGame = false;
-        Material = "";
+        UserName = String.Empty;
+        Material = String.Empty;
     }
     public void Save()
     {

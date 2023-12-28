@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Board : MonoBehaviour
 {
@@ -224,8 +225,8 @@ public class Board : MonoBehaviour
             return true;
         }
 
-        //если едим вражескую фигуру и рядом есть интеллектор (и мы съели не интеллектора? что?)
-        else if (pieces[end.x][end.y] != null && (pieces[end.x][end.y].team != pieces[start.x][start.y].team) && (pieces[start.x][start.y].HasIntellectorNearby() && (pieces[end.x][end.y].type != PieceType.intellector)))
+        //если едим вражескую фигуру и рядом есть интеллектор, и ходил не прогрессор, и мы съели не интеллектора
+        else if (pieces[end.x][end.y] != null && (pieces[end.x][end.y].team != pieces[start.x][start.y].team) && (pieces[start.x][start.y].HasIntellectorNearby() && (pieces[start.x][start.y].type!=PieceType.progressor) && (pieces[end.x][end.y].type != PieceType.intellector)))
         {
             // то можно превратиться в съеденную фигуру
             Around_Intellector.SetActive(true);
@@ -351,7 +352,7 @@ public class Board : MonoBehaviour
     }
 
 
-    void GameOver(bool winner)
+    public void GameOver(bool winner, bool ByExit = false)
     {
         Debug.Log((winner) ? "ПОБЕДИЛА КОМАНДА ЧЕРНОГО КАМНЯ" : "ПОБЕДИЛА КОМАНДА БЕЛОГО МРАМОРА");
         AvaibleMoves = null;
@@ -360,10 +361,20 @@ public class Board : MonoBehaviour
         game_over = true;
         if (winner)
         {
+            if (ByExit)
+            {
+                Text text = EndGameBlack.GetComponentInChildren<Text>();
+                text.text = "Противник вышел";
+            }
             EndGameBlack.SetActive(true);
         }
         else
         {
+            if (ByExit)
+            {
+                Text text = EndGameWhite.GetComponentInChildren<Text>();
+                text.text = "Противник вышел";
+            }
             EndGameWhite.SetActive(true);
         }
     }
