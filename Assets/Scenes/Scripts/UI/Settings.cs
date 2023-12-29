@@ -8,7 +8,8 @@ public class Settings
 {
     [field: NonSerialized]
     public static string config_file_path = "config.bin";
-    public static string server_ip = "194.87.235.152";
+    private static string server_ip = "194.87.235.152";
+    private static string local_ip = "192.168.1.5";
 
     public string ServerIP { get; set; }
     public uint Game_ID_To_Connect { get; set; }

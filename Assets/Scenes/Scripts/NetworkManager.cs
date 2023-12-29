@@ -16,6 +16,8 @@ public class NetworkManager : MonoBehaviour
 
     byte[] TillWaitingAnswer = new byte[1] { 1 };
     byte[] ReceivedMoveBytes = new byte[5];
+
+    private const string password = "a3P1>8]Ы-/йЧяЭ975?:$qcDыФ9&e@1a<c{a/";
     const string LogFilePath = "log.txt";
 
     void Start()
@@ -27,6 +29,10 @@ public class NetworkManager : MonoBehaviour
             stream = client.GetStream();
 
             WriteLog("Подключение к серверу");
+
+            byte[] password_bytes = Encoding.Default.GetBytes(password);
+            stream.Write(password_bytes, 0, password_bytes.Length);
+
             byte[] SentIdBytes = new byte[1];
             SentIdBytes[0] = Convert.ToByte(settings.Game_ID_To_Connect);
             stream.Write(SentIdBytes, 0, 1);

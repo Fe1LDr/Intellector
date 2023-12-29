@@ -21,7 +21,8 @@ public class NetworkGamesScene : MonoBehaviour
     List<Button> Buttons = new List<Button>();
     public uint selected_id;
 
-    // Start is called before the first frame update
+    private const string password = "a3P1>8]Û-/é×ÿİ975?:$qcDûÔ9&e@1a<c{a/";
+
     void Start()
     {
         ReadGamesFromServer();
@@ -36,6 +37,9 @@ public class NetworkGamesScene : MonoBehaviour
             Settings settings = Settings.Load();
             TcpClient server = new TcpClient(settings.ServerIP, 7001);
             stream = server.GetStream();
+
+            byte[] password_bytes = Encoding.Default.GetBytes(password);
+            stream.Write(password_bytes, 0, password_bytes.Length);
 
             byte[] SentIdBytes = new byte[1] { 100 };
             stream.Write(SentIdBytes, 0, 1);
@@ -72,6 +76,8 @@ public class NetworkGamesScene : MonoBehaviour
             {
                 Destroy(item);
             }
+            Items.Clear();
+            Buttons.Clear();
         }
     }
 
