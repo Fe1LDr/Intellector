@@ -102,6 +102,25 @@ public class UnitTests {
     }
 
     [UnityTest]
+    public IEnumerator AgressorMoveTest() // +
+    {
+        SetUp();
+        Agressor agressor = board.pieces[2][0] as Agressor;
+        yield return new WaitForSeconds(0.1f);
+        board.SelectTile(new Vector2Int(2, 0));
+        yield return new WaitForSeconds(0.1f);
+        board.SelectTile(new Vector2Int(3, 1));
+        yield return new WaitForSeconds(0.1f);
+
+        PieceType result = board.pieces[3][1].type;
+        Assert.AreEqual(result, PieceType.agressor);
+        Assert.AreEqual(agressor.x, 3);
+        Assert.AreEqual(agressor.y, 1);
+    }
+
+
+
+    [UnityTest]
     public IEnumerator LiberatorUnavailibleMoveTest() // +
     {
         SetUp();
