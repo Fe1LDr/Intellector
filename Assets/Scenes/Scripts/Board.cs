@@ -378,4 +378,48 @@ public class Board : MonoBehaviour
             EndGameWhite.SetActive(true);
         }
     }
+
+    public GameObject[][] CloneTilesArray(GameObject[][] original)
+    {
+        GameObject[][] clone = new GameObject[original.Length][];
+        for (int i = 0; i < original.Length; i++)
+        {
+            clone[i] = new GameObject[original[i].Length];
+            for (int j = 0; j < original[i].Length; j++)
+            {
+                clone[i][j] = Instantiate(original[i][j]); // Создание новой копии клетки
+                                                           // Дополнительные настройки копии клетки, если необходимо
+            }
+        }
+        return clone;
+    }
+
+    public Piece[][] ClonePiecesArray(Piece[][] original)
+    {
+        Piece[][] clone = new Piece[original.Length][];
+        for (int i = 0; i < original.Length; i++)
+        {
+            clone[i] = new Piece[original[i].Length];
+            for (int j = 0; j < original[i].Length; j++)
+            {
+                if (original[i][j] != null)
+                {
+                    clone[i][j] = Instantiate(original[i][j]); // Создание новой копии фигуры
+                                                               // Дополнительные настройки копии фигуры, если необходимо
+                }
+            }
+        }
+        return clone;
+    }
+
+    public Board CloneBoard()
+    {
+        Board clone = Instantiate(this); // Создание копии основного объекта доски
+
+        // Создание копии клеток и фигур для доски-клона
+        clone.tiles = CloneTilesArray(tiles);
+        clone.pieces = ClonePiecesArray(pieces);
+
+        return clone;
+    }
 }
