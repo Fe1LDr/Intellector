@@ -28,6 +28,7 @@ public class Board : MonoBehaviour
     public event MoveDelegate MoveEvent;
 
     [NonSerialized] public bool Turn;
+    [NonSerialized] public bool AI;
     [NonSerialized] public bool game_over;
     public Piece[][] pieces;
     public GameObject[][] tiles;
@@ -53,6 +54,7 @@ public class Board : MonoBehaviour
         GenerateAllPieces();
 
         Turn = false;
+        AI = true;
         game_over = false;
 
         Settings settings = Settings.Load();
@@ -379,32 +381,32 @@ public class Board : MonoBehaviour
         }
     }
 
-    public GameObject[][] CloneTilesArray(GameObject[][] original)
+    public GameObject[][] CloneTilesArray(Transform parent)
     {
-        GameObject[][] clone = new GameObject[original.Length][];
-        for (int i = 0; i < original.Length; i++)
+        GameObject[][] clone = new GameObject[tiles.Length][];
+        for (int i = 0; i < tiles.Length; i++)
         {
-            clone[i] = new GameObject[original[i].Length];
-            for (int j = 0; j < original[i].Length; j++)
+            clone[i] = new GameObject[tiles[i].Length];
+            for (int j = 0; j < tiles[i].Length; j++)
             {
-                clone[i][j] = Instantiate(original[i][j]); // Создание новой копии клетки
+                clone[i][j] = Instantiate(tiles[i][j], parent); // Создание новой копии клетки
                                                            // Дополнительные настройки копии клетки, если необходимо
             }
         }
         return clone;
     }
 
-    public Piece[][] ClonePiecesArray(Piece[][] original)
+    public Piece[][] ClonePiecesArray(Transform parent)
     {
-        Piece[][] clone = new Piece[original.Length][];
-        for (int i = 0; i < original.Length; i++)
+        Piece[][] clone = new Piece[pieces.Length][];
+        for (int i = 0; i < pieces.Length; i++)
         {
-            clone[i] = new Piece[original[i].Length];
-            for (int j = 0; j < original[i].Length; j++)
+            clone[i] = new Piece[pieces[i].Length];
+            for (int j = 0; j < pieces[i].Length; j++)
             {
-                if (original[i][j] != null)
+                if (pieces[i][j] != null)
                 {
-                    clone[i][j] = Instantiate(original[i][j]); // Создание новой копии фигуры
+                    clone[i][j] = Instantiate(pieces[i][j], parent); // Создание новой копии фигуры
                                                                // Дополнительные настройки копии фигуры, если необходимо
                 }
             }
@@ -417,8 +419,8 @@ public class Board : MonoBehaviour
         Board clone = Instantiate(this); // Создание копии основного объекта доски
 
         // Создание копии клеток и фигур для доски-клона
-        clone.tiles = CloneTilesArray(tiles);
-        clone.pieces = ClonePiecesArray(pieces);
+        clone.tiles = CloneTilesArray(clone.transform);
+        clone.pieces = ClonePiecesArray(clone.transform);
 
         return clone;
     }
