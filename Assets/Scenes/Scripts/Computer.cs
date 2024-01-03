@@ -11,7 +11,25 @@ using UnityEngine.UI;
 public class Computer : MonoBehaviour
 {
     private Board board;
-    private List<int> scores = new() { 100, 300, 10000, 900, 300 ,500 };
+    private List<int> scores = new() { 10, 30, 1000, 90, 40, 50 };
+    private int[,] whiteProgressor = { { 0, 1, 0, 1, 2, 5, 0 }, 
+                                       { 0, 2, 0, 1, 2, 5, -1},
+                                       { 5, 1, 0, 1, 2, 5, 0},
+                                       { 2, 3, 0, 1, 2, 5, -1 },
+                                       { 0, 1, 0, 1, 2, 5, 0},
+                                       { 2, 3, 0, 1, 2, 5, -1},
+                                       { 5, 1, 0, 1, 2, 5, 0 },
+                                       { 0, 2, 0, 1, 2, 5, -1},
+                                       { 0, 1, 0, 1, 2, 5, 0}, };
+    private int[,] blackProgressor = { { 0, 5, 2, 1, 0, 1, 0 },
+                                       { 5, 2, 1, 0, 2, 5, -1},
+                                       { -5, 5, 2, 1, 0, 1, 0},
+                                       { 5, 2, 1, 0, 2, 3, -1},
+                                       { 0, 5, 2, 1, 0, 1, 0},
+                                       { 5, 2, 1, 0, 2, 3, -1},
+                                       { -5, 5, 2, 1, 0, 1, 0},
+                                       { 5, 2, 1, 0, 2, 5, -1},
+                                       { 0, 5, 2, 1, 0, 1, 0}, };
     // Start is called before the first frame update
     void Start()
     {
@@ -19,26 +37,25 @@ public class Computer : MonoBehaviour
         board = gameGameObject.GetComponent<Board>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (board.Turn == true && board.AI == true)
         {
             board.AI = false;
-            MinMaxRoot(2, board, true);
+            MinMaxRoot(4, board.pieces, true);
         }
     }
 
     public void MakeAIMove()
     {
         int max_score = -1000000;
-        List<int> bestmove = new() { 0, 0, 0, 0, 0 };
-        List<List<int>> allMoves = GetMoves(board);
+        List<int> bestmove = new() { 0, 0, 0, 0 };
+        List<List<int>> allMoves = GetMoves(board.pieces, true);
 
         foreach (List<int> move in allMoves)
         {
             // ѕрименение хода к временной копии доски
-            Board boardCopy = board.CloneBoard();
+            Board boardCopy = board.CloneBoard(board);
             boardCopy.SelectTile(new Vector2Int(move[0], move[1]));
             boardCopy.SelectTile(new Vector2Int(move[2], move[3]));
             //boardCopy.MovePiece(new Vector2Int(move[0], move[1]), new Vector2Int(move[2], move[3]), false);
@@ -49,10 +66,9 @@ public class Computer : MonoBehaviour
 
             int evaluation = EvaluatePosition(boardCopy.pieces);
             
-            move[4] = evaluation;
-            if (move[4] > max_score)
+            if (evaluation > max_score)
             {
-                max_score = move[4];
+                max_score = evaluation;
                 bestmove[0] = move[0];
                 bestmove[1] = move[1];
                 bestmove[2] = move[2];
@@ -77,61 +93,83 @@ public class Computer : MonoBehaviour
         board.AI = true;
     }
 
-    public List<int> MinMaxRoot(int depth, Board board1, bool isMaximisingPlayer)
+    public List<int> MinMaxRoot(int depth, Piece[][] pieces, bool isMaximisingPlayer)
     {
-        List<List<int>> Moves = GetMoves(board1);
+        List<List<int>> Moves = GetMoves(pieces, isMaximisingPlayer);
         int maxscore = -100000;
-        List<int> bestmove = new() { 0, 0, 0, 0, 0 };
+        List<int> bestmove = new() { 0, 0, 0, 0 };
+        int ev = EvaluatePosition(pieces);
 
         foreach (List<int> move in Moves)
         {
-            Board boardCopy = board1.CloneBoard();
-            //boardCopy.SelectTile(new Vector2Int(move[0], move[1]));
-            //boardCopy.SelectTile(new Vector2Int(move[2], move[3]));
-            boardCopy.pieces[move[2]][move[3]] = boardCopy.pieces[move[0]][move[1]];
-            boardCopy.pieces[move[2]][move[3]].x = move[2];
-            boardCopy.pieces[move[2]][move[3]].y = move[3];
-            boardCopy.pieces[move[0]][move[1]] = null;
-            boardCopy.Turn = !boardCopy.Turn;
-            int eval = MinMax(depth - 1, boardCopy, -10000, 10000, !isMaximisingPlayer);
+            Piece[][] clone = new Piece[pieces.Length][];
+            for (int i = 0; i < pieces.Length; i++)
+            {
+                clone[i] = new Piece[pieces[i].Length];
+                for (int j = 0; j < pieces[i].Length; j++)
+                {
+                    if (pieces[i][j] != null)
+                    {
+                        clone[i][j] = pieces[i][j];
+                    }
+                }
+            }
+            clone[move[2]][move[3]] = clone[move[0]][move[1]];
+            clone[move[0]][move[1]] = null;
 
-            DestroyBoard(boardCopy);
+            int eval = MinMax(depth - 1, clone, -10000, 10000, !isMaximisingPlayer, move);
+
             if (eval > maxscore)
             {
                 maxscore = eval;
                 bestmove = move;
             }
         }
-        board1.SelectTile(new Vector2Int(bestmove[0], bestmove[1]));
-        board1.SelectTile(new Vector2Int(bestmove[2], bestmove[3]));
-        board1.AI = true;
+        board.SelectTile(new Vector2Int(bestmove[0], bestmove[1]));
+        board.SelectTile(new Vector2Int(bestmove[2], bestmove[3]));
+        Button yourButton = GameObject.Find("Yes")?.GetComponent<Button>();
+        if (yourButton != null)
+        {
+            EventTrigger trigger = yourButton.gameObject.GetComponent<EventTrigger>();
+            if (trigger == null)
+            {
+                trigger = yourButton.gameObject.AddComponent<EventTrigger>();
+            }
+            yourButton.onClick.Invoke();
+        }
+        board.AI = true;
         return bestmove;
     }
 
-    public int MinMax(int depth, Board boardC, int alpha, int beta, bool isMaximisingPlayer)
+    public int MinMax(int depth, Piece[][] pieces, int alpha, int beta, bool isMaximisingPlayer, List<int> moveLast)
     {
         if (depth == 0)
         {
-            return EvaluatePosition(boardC.pieces);
+            return newEval(pieces, moveLast);
         }
-
-        List<List<int>> Moves = GetMoves(boardC);
+        List<List<int>> Moves = GetMoves(pieces, isMaximisingPlayer);
 
         if (isMaximisingPlayer)
         {
             int max_score = -100000;
             foreach (List<int> move in Moves)
             {
-                Board boardCop = boardC.CloneBoard();
-                //boardCop.SelectTile(new Vector2Int(move[0], move[1]));
-                //boardCop.SelectTile(new Vector2Int(move[2], move[3]));
-                boardCop.pieces[move[2]][move[3]] = boardCop.pieces[move[0]][move[1]];
-                boardCop.pieces[move[2]][move[3]].x = move[2];
-                boardCop.pieces[move[2]][move[3]].y = move[3];
-                boardCop.pieces[move[0]][move[1]] = null;
-                boardCop.Turn = !boardCop.Turn;
-                max_score = Math.Max(max_score, MinMax(depth - 1, boardCop, alpha, beta, !isMaximisingPlayer));
-                DestroyBoard(boardCop);
+                Piece[][] clone = new Piece[pieces.Length][];
+                for (int i = 0; i < pieces.Length; i++)
+                {
+                    clone[i] = new Piece[pieces[i].Length];
+                    for (int j = 0; j < pieces[i].Length; j++)
+                    {
+                        if (pieces[i][j] != null)
+                        {
+                            clone[i][j] = pieces[i][j];
+                        }
+                    }
+                }
+                clone[move[2]][move[3]] = clone[move[0]][move[1]];
+                clone[move[0]][move[1]] = null;
+                max_score = Math.Max(max_score, MinMax(depth - 1, pieces, alpha, beta, !isMaximisingPlayer, move));
+                
                 alpha = Math.Max(alpha, max_score);
                 if (beta <= alpha)
                 {
@@ -145,16 +183,22 @@ public class Computer : MonoBehaviour
             int max_score = 100000;
             foreach (List<int> move in Moves)
             {
-                Board boardCop = boardC.CloneBoard();
-                boardCop.SelectTile(new Vector2Int(move[0], move[1]));
-                boardCop.SelectTile(new Vector2Int(move[2], move[3]));
-                boardCop.pieces[move[2]][move[3]] = boardCop.pieces[move[0]][move[1]];
-                boardCop.pieces[move[2]][move[3]].x = move[2];
-                boardCop.pieces[move[2]][move[3]].y = move[3];
-                boardCop.pieces[move[0]][move[1]] = null;
-                boardCop.Turn = !boardCop.Turn;
-                max_score = Math.Min(max_score, MinMax(depth - 1, boardCop, alpha, beta, !isMaximisingPlayer));
-                DestroyBoard(boardCop);
+                Piece[][] clone = new Piece[pieces.Length][];
+                for (int i = 0; i < pieces.Length; i++)
+                {
+                    clone[i] = new Piece[pieces[i].Length];
+                    for (int j = 0; j < pieces[i].Length; j++)
+                    {
+                        if (pieces[i][j] != null)
+                        {
+                            clone[i][j] = pieces[i][j];
+                        }
+                    }
+                }
+                clone[move[2]][move[3]] = clone[move[0]][move[1]];
+                clone[move[0]][move[1]] = null;
+                max_score = Math.Min(max_score, MinMax(depth - 1, clone, alpha, beta, !isMaximisingPlayer, move));
+                
                 beta = Math.Min(beta, max_score);
                 if (beta <= alpha)
                 {
@@ -163,6 +207,13 @@ public class Computer : MonoBehaviour
             }
             return max_score;
         }
+    }
+
+    public int newEval(Piece[][] pieces, List<int> move)
+    {
+        
+
+        return EvaluatePosition(pieces);
     }
 
     public int EvaluatePosition(Piece[][] pieces)
@@ -177,23 +228,22 @@ public class Computer : MonoBehaviour
                 Piece currentPiece = pieces[i][j];
                 if (currentPiece != null)
                 {
-                    int pieceValue = GetPieceValue(currentPiece.type);
+                    int pieceValue = GetPieceValue(currentPiece.type) + ((currentPiece.team) ? blackProgressor[i, j] : whiteProgressor[i, j]);
                     if (currentPiece.team)
                     {
-                        whiteEvaluation += pieceValue;
+                        blackEvaluation += pieceValue;
                     }
                     else
                     {
-                        blackEvaluation += pieceValue;
+                        whiteEvaluation += pieceValue;
                     }
                 }
             }
         }
-        return whiteEvaluation - blackEvaluation;
+        return blackEvaluation - whiteEvaluation;
     }
 
-
-    private int GetPieceValue(PieceType type)
+private int GetPieceValue(PieceType type)
     {
         return scores[(int)type];
     }
@@ -224,20 +274,20 @@ public class Computer : MonoBehaviour
         Destroy(boardCopy.gameObject);
     }
 
-    private List<List<int>> GetMoves(Board board)
+    private List<List<int>> GetMoves(Piece[][] pieces, bool t)
     {
         List<List<int>> allMoves = new List<List<int>>();
 
-        foreach (Piece[] piece in board.pieces)
+        foreach (Piece[] piece in pieces)
         {
             foreach (Piece piece1 in piece)
             {
-                if (piece1 is not null && piece1.team == true)
+                if (piece1 is not null && piece1.team == t)
                 {
                     List<Vector2Int> availableMoves = piece1.GetAvaibleMooves();
                     foreach (Vector2Int move in availableMoves)
                     {
-                        List<int> currentmove = new() { piece1.x, piece1.y, move.x, move.y, 0 };
+                        List<int> currentmove = new() { piece1.x, piece1.y, move.x, move.y };
                         allMoves.Add(currentmove);
                     }
                 }
