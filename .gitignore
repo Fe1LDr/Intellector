@@ -9,6 +9,7 @@
 /[Bb]uilds/
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
+/[Cc]ode[Cc]overage/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
@@ -76,3 +77,4 @@ Packages/Gherkin.27.0.0
 Packages/SpecFlow.3.9.74
 Packages/SpecFlow.Tools.MsBuild.Generation.3.9.74
 Packages/
+CodeCoverage/

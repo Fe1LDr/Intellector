@@ -28,53 +28,6 @@ public class Computer : MonoBehaviour
         }
     }
 
-    public void MakeAIMove()
-    {
-        int max_score = -1000000;
-        List<int> bestmove = new() { 0, 0, 0, 0 };
-        List<List<int>> allMoves = GetMoves(board.pieces, true);
-
-        foreach (List<int> move in allMoves)
-        {
-            // ѕрименение хода к временной копии доски
-            Board boardCopy = board.CloneBoard(board);
-            boardCopy.SelectTile(new Vector2Int(move[0], move[1]));
-            boardCopy.SelectTile(new Vector2Int(move[2], move[3]));
-            //boardCopy.MovePiece(new Vector2Int(move[0], move[1]), new Vector2Int(move[2], move[3]), false);
-            boardCopy.pieces[move[2]][move[3]] = boardCopy.pieces[move[0]][move[1]];
-            boardCopy.pieces[move[2]][move[3]].x = move[2];
-            boardCopy.pieces[move[2]][move[3]].y = move[3];
-            boardCopy.pieces[move[0]][move[1]] = null;
-
-            int evaluation = EvaluatePosition(boardCopy.pieces);
-            
-            if (evaluation > max_score)
-            {
-                max_score = evaluation;
-                bestmove[0] = move[0];
-                bestmove[1] = move[1];
-                bestmove[2] = move[2];
-                bestmove[3] = move[3];
-            }
-
-            DestroyBoard(boardCopy);
-        }
-        board.SelectTile(new Vector2Int(bestmove[0], bestmove[1]));
-        board.SelectTile(new Vector2Int(bestmove[2], bestmove[3]));
-        Button yourButton = GameObject.Find("Yes")?.GetComponent<Button>();
-        if ( yourButton != null )
-        {
-            EventTrigger trigger = yourButton.gameObject.GetComponent<EventTrigger>();
-            if (trigger == null)
-            {
-                trigger = yourButton.gameObject.AddComponent<EventTrigger>();
-            }
-            yourButton.onClick.Invoke();
-        }
-        
-        board.AI = true;
-    }
-
     public List<int> MinMaxRoot(int depth, Piece[][] pieces, bool isMaximisingPlayer)
     {
         List<List<int>> Moves = GetMoves(pieces, isMaximisingPlayer);
@@ -128,7 +81,7 @@ public class Computer : MonoBehaviour
     {
         if (depth == 0)
         {
-            return newEval(pieces);
+            return EvaluatePosition(pieces);
         }
         List<List<int>> Moves = GetMoves(pieces, isMaximisingPlayer);
 
@@ -192,11 +145,6 @@ public class Computer : MonoBehaviour
         }
     }
 
-    public int newEval(Piece[][] pieces)
-    {
-        return EvaluatePosition(pieces);
-    }
-
     public int EvaluatePosition(Piece[][] pieces)
     {
         int total = 0;
@@ -252,31 +200,6 @@ private int GetPieceValue(Piece currentPiece, int x, int y)
         return w.scores[(int)currentPiece.type];
     }
 
-    private void DestroyBoard(Board boardCopy)
-    {
-        foreach (Piece[] row in boardCopy.pieces)
-        {
-            foreach (Piece piece in row)
-            {
-                if (piece != null)
-                {
-                    Destroy(piece.gameObject);
-                }
-            }
-        }
-
-        foreach (GameObject[] row in boardCopy.tiles)
-        {
-            foreach (GameObject tile in row)
-            {
-                if (tile != null)
-                {
-                    Destroy(tile);
-                }
-            }
-        }
-        Destroy(boardCopy.gameObject);
-    }
 
     private List<List<int>> GetMoves(Piece[][] pieces, bool t)
     {
