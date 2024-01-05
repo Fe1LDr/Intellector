@@ -308,7 +308,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 86350707}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.09879838, y: 0.004583888, z: -0.0044779014, w: 0.99508685}
+  m_LocalRotation: {x: -0.098798335, y: 0.0045839073, z: -0.00447792, w: 0.9950869}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1755,7 +1755,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.33100018, y: 0.0060468563, z: -0.0021211226, w: 0.94360894}
+  m_LocalRotation: {x: 0.33100018, y: 0.0060468805, z: -0.0021211312, w: 0.94360894}
   m_LocalPosition: {x: 10.009601, y: 19.759998, z: -16.157948}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2069,7 +2069,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1093103410}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.11688216, y: 0.004664609, z: -0.0043938085, w: 0.99312514}
+  m_LocalRotation: {x: -0.116882116, y: 0.004664578, z: -0.00439378, w: 0.9931252}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2323,8 +2323,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 602242556238173639, guid: b42a0f3540fec214d8747d57a4b589c9, type: 3}
       propertyPath: m_Text
-      value: "\u041F\u041E\u0411\u0415\u0414\u0418\u041B\u0410 \u041A\u041E\u041C\u0410\u041D\u0414\u0410
-        \u0411\u0415\u041B\u041E\u0413\u041E \u041C\u0420\u0410\u041C\u041E\u0420\u0410"
+      value: "\u0418\u0413\u0420\u0410 \u041E\u041A\u041E\u041D\u0427\u0415\u041D\u0410"
+      objectReference: {fileID: 0}
+    - target: {fileID: 602242556238173639, guid: b42a0f3540fec214d8747d57a4b589c9, type: 3}
+      propertyPath: m_FontData.m_BestFit
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 602242556238173639, guid: b42a0f3540fec214d8747d57a4b589c9, type: 3}
       propertyPath: m_FontData.m_Alignment
@@ -2428,11 +2431,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4082230317916894565, guid: b42a0f3540fec214d8747d57a4b589c9, type: 3}
       propertyPath: m_Name
-      value: EndGameWhite
+      value: EndGame
       objectReference: {fileID: 0}
     - target: {fileID: 4082230317916894565, guid: b42a0f3540fec214d8747d57a4b589c9, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8518124826902567914, guid: b42a0f3540fec214d8747d57a4b589c9, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8544935400278131550, guid: b42a0f3540fec214d8747d57a4b589c9, type: 3}
+      propertyPath: m_FontData.m_Alignment
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2872,7 +2883,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2142865513}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.13487963, y: 0.0047435416, z: -0.004308454, w: 0.99084127}
+  m_LocalRotation: {x: -0.1348796, y: 0.0047435206, z: -0.0043084356, w: 0.99084127}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2891,7 +2902,7 @@ PrefabInstance:
     - target: {fileID: 958176781406646849, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
       propertyPath: EndGame
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 778412355}
     - target: {fileID: 958176781406646849, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
       propertyPath: PlayerTeam
       value: 0

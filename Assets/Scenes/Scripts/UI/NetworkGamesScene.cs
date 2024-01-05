@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.IO;
 using System;
 using System.Text;
+using static Networking;
 
 public class NetworkGamesScene : MonoBehaviour
 {
@@ -21,8 +22,6 @@ public class NetworkGamesScene : MonoBehaviour
     List<Button> Buttons = new List<Button>();
     public uint selected_id;
 
-    private const string password = "a3P1>8]Û-/é×ÿÝ975?:$qcDûÔ9&e@1a<c{a/";
-
     void Start()
     {
         ReadGamesFromServer();
@@ -32,22 +31,18 @@ public class NetworkGamesScene : MonoBehaviour
     {
         ClearItems();
         NetworkStream stream;
+        const byte games_list_request = 100;
+
         try
         {
             Settings settings = Settings.Load();
             TcpClient server = new TcpClient(settings.ServerIP, 7001);
             stream = server.GetStream();
 
-            byte[] password_bytes = Encoding.Default.GetBytes(password);
-            stream.Write(password_bytes, 0, password_bytes.Length);
+            SendString(password, stream);
+            Networking.SendMessage(games_list_request, stream);
+            uint GameCount = RecvMessage(stream);
 
-            byte[] SentIdBytes = new byte[1] { 100 };
-            stream.Write(SentIdBytes, 0, 1);
-
-            byte[] GetFromServerBytes = new byte[1];
-            stream.Read(GetFromServerBytes, 0, 1);
-
-            uint GameCount = GetFromServerBytes[0];
             for (int i = 0; i < GameCount; i++)
             {
                 ReadGame();
@@ -61,13 +56,8 @@ public class NetworkGamesScene : MonoBehaviour
 
         void ReadGame()
         {
-            byte[] id_bytes = new byte[4];
-            byte[] name_bytes = new byte[20];
-            stream.Read(id_bytes, 0, 4);
-            stream.Read(name_bytes, 0, 20);
-            uint id = BitConverter.ToUInt32(id_bytes);
-            string name = Encoding.Default.GetString(name_bytes).TrimEnd('\0');
-            DisplayGame(id, name);
+            GameInfo game = RecvGameInfo(stream);
+            DisplayGame(game);
         }
 
         void ClearItems()
@@ -107,40 +97,24 @@ public class NetworkGamesScene : MonoBehaviour
         SceneManager.LoadScene(1);
     }
 
-    void DisplayGame(uint id, string name)
+    void DisplayGame(GameInfo game)
     {
         Transform content_transform = Content.GetComponent<Transform>();
         GameObject net_game_obj = Instantiate(NetworkGamePrefab);
         NetworkGameItem net_game = net_game_obj.GetComponent<NetworkGameItem>();
 
-        net_game.ID = id;
+        net_game.GameInfo = game;
         net_game.NetworkGameScene = this;
         net_game_obj.transform.SetParent(content_transform, transform);
         net_game_obj.GetComponentInChildren<Image>().color = new Color(DefaultColor.r, DefaultColor.g, DefaultColor.b, 1f);
 
         Text text = net_game_obj.GetComponentInChildren<Text>();
-        text.text = name;
+        text.text = game.Name;
         Items.Add(net_game_obj);
         Buttons.Add(net_game_obj.GetComponent<Button>());
     }
 
-    void TestFeel(uint id)
-    {
-        Transform content_transform = Content.GetComponent<Transform>();
-        GameObject net_game_obj = Instantiate(NetworkGamePrefab);
-        NetworkGameItem net_game = net_game_obj.GetComponent<NetworkGameItem>();
-
-        net_game.ID = id;
-        net_game.NetworkGameScene = this;
-        net_game_obj.transform.SetParent(content_transform, transform);
-        net_game_obj.GetComponentInChildren<Image>().color = new Color(DefaultColor.r, DefaultColor.g, DefaultColor.b, 1f);
-
-        Text text = net_game_obj.GetComponentInChildren<Text>();
-        text.text = $"Test {id}";
-        Items.Add(net_game_obj);
-        Buttons.Add(net_game_obj.GetComponent<Button>());
-    }
-
+    void TestFeel(uint id) => DisplayGame(new GameInfo(id, $"Test {id}"));
     public void ConfirmNameInput()
     {
         string NameInput = AskForNameWindow.GetComponentInChildren<InputField>().text;

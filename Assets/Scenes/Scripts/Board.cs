@@ -18,8 +18,7 @@ public class Board : MonoBehaviour
     [Header("UI")]
     [SerializeField] GameObject Progressor_end;
     [SerializeField] GameObject Around_Intellector;
-    [SerializeField] GameObject EndGameWhite;
-    [SerializeField] GameObject EndGameBlack;
+    [SerializeField] GameObject EndGame;
 
     [NonSerialized] public bool NetworkGame;
     [NonSerialized] public bool PlayerTeam;
@@ -354,28 +353,22 @@ public class Board : MonoBehaviour
 
     public void GameOver(bool winner, bool ByExit = false)
     {
-        Debug.Log((winner) ? "ÏÎÁÅÄÈËÀ ÊÎÌÀÍÄÀ ×ÅĞÍÎÃÎ ÊÀÌÍß" : "ÏÎÁÅÄÈËÀ ÊÎÌÀÍÄÀ ÁÅËÎÃÎ ÌĞÀÌÎĞÀ");
+        if (game_over) return;
+
         AvaibleMoves = null;
         currentHover = -Vector2Int.one;
         currentSelect = -Vector2Int.one;
         game_over = true;
-        if (winner)
-        {
-            if (ByExit)
-            {
-                Text text = EndGameBlack.GetComponentInChildren<Text>();
-                text.text = "Ïğîòèâíèê âûøåë";
-            }
-            EndGameBlack.SetActive(true);
-        }
-        else
-        {
-            if (ByExit)
-            {
-                Text text = EndGameWhite.GetComponentInChildren<Text>();
-                text.text = "Ïğîòèâíèê âûøåë";
-            }
-            EndGameWhite.SetActive(true);
-        }
+
+        Text[] text = EndGame.GetComponentsInChildren<Text>();
+        Text top_text = text[0];
+        Text low_text = text[1];
+
+
+        if (NetworkGame) low_text.text = (winner == PlayerTeam) ? "ÂÛ ÂÛÈÃĞÀËÈ" : "ÂÛ ÏĞÎÈÃĞÀËÈ";
+        else low_text.text = (winner) ? "ÏÎÁÅÄÈËÈ ×¨ĞÍÛÅ" : "ÏÎÁÅÄÈËÈ ÁÅËÛÅ";
+        if (ByExit) top_text.text = "ÏĞÎÒÈÂÍÈÊ ÂÛØÅË";
+
+        EndGame.SetActive(true);
     }
 }

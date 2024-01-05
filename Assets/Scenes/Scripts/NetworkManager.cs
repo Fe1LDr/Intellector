@@ -5,42 +5,37 @@ using System.Threading;
 using System;
 using System.Text;
 using UnityEngine.SceneManagement;
+using static Networking;
+using static LogWriter;
 
 public class NetworkManager : MonoBehaviour
 {
     [SerializeField] private Board board;
     [SerializeField] private GameObject WaitScreen;
-    TcpClient client;
+
     NetworkStream stream;
     Thread ServerCommunicator;
 
-    byte[] TillWaitingAnswer = new byte[1] { 1 };
-    byte[] ReceivedMoveBytes = new byte[5];
-
-    private const string password = "a3P1>8]Ы-/йЧяЭ975?:$qcDыФ9&e@1a<c{a/";
-    const string LogFilePath = "log.txt";
+    bool still_waiting;
+    
 
     void Start()
     {
         Settings settings = Settings.Load();
         if (settings.NetworkGame)
         {
-            client = new TcpClient(settings.ServerIP, 7001);
+            TcpClient client = new TcpClient(settings.ServerIP, 7001);
             stream = client.GetStream();
 
             WriteLog("Подключение к серверу");
+            SendString(password, stream);
 
-            byte[] password_bytes = Encoding.Default.GetBytes(password);
-            stream.Write(password_bytes, 0, password_bytes.Length);
+            byte wanted_id = Convert.ToByte(settings.Game_ID_To_Connect);
+            Networking.SendMessage(wanted_id, stream);
 
-            byte[] SentIdBytes = new byte[1];
-            SentIdBytes[0] = Convert.ToByte(settings.Game_ID_To_Connect);
-            stream.Write(SentIdBytes, 0, 1);
-
-            if (settings.Game_ID_To_Connect == 0)
+            if (wanted_id == 0)
             {
-                byte[] name_bytes = Encoding.Default.GetBytes(settings.UserName);
-                stream.Write(name_bytes, 0, name_bytes.Length);
+                SendString(settings.UserName, stream);
                 WaitScreen.SetActive(true);
 
                 ServerCommunicator = new Thread(WaitForStart);
@@ -55,66 +50,73 @@ public class NetworkManager : MonoBehaviour
 
     bool TryConnect()
     {
-        byte[] GetFromServerBytes = new byte[1];
-        stream.Read(GetFromServerBytes, 0, 1);
+        const byte no_such_game_ans = 99;
+        const byte white_team = 0;
+        const byte black_team = 1;
 
-        byte ans = GetFromServerBytes[0];
-        WriteLog($"Получено сообщение: {GetFromServerBytes[0]}");
-        if(ans == 99)
+        byte server_ans = RecvMessage(stream);
+        WriteLog($"Получено сообщение: {server_ans}");
+        if(server_ans == no_such_game_ans)
         {
             WriteLog($"Игра уже не существует");
-
-            client.Close();
+            stream.Close();
             SceneManager.LoadScene(2);
         }
-        if (ans == 0 || ans == 1)
+        if (server_ans == white_team || server_ans == black_team)
         {
             WriteLog($"Противник найден");
-            StartGame(ans);
+            StartGame(server_ans);
             return true;
         }
         return false;
     }
 
-    public void ReceiveMove()
+    public void ExecuteReceivedMove(byte[] move)
     {
-        Vector2Int start = new Vector2Int(ReceivedMoveBytes[0], ReceivedMoveBytes[1]);
-        Vector2Int end = new Vector2Int(ReceivedMoveBytes[2], ReceivedMoveBytes[3]);
-        int transform_info = ReceivedMoveBytes[4];
+        Vector2Int start = new Vector2Int(move[0], move[1]);
+        Vector2Int end = new Vector2Int(move[2], move[3]);
+        int transform_info = move[4];
         board.MovePiece(start, end, true, transform_info);
     }
 
     void MoveEventHandler(Vector2Int start, Vector2Int end, int transform_info)
     {
-        byte[] MoveBytes = new byte[5] { (byte)start.x, (byte)start.y, (byte)end.x, (byte)end.y, (byte)transform_info };
-        stream.Write(MoveBytes, 0, 5);
+        SendMove(new byte[5] { (byte)start.x, (byte)start.y, (byte)end.x, (byte)end.y, (byte)transform_info }, stream);
         WriteLog($"Отправка хода: {start} ; {end} ; {transform_info}");
     }
 
     void ListenToServer()
     {
+        const byte exit_code = 111;
         while (true)
         {
-            stream.Read(ReceivedMoveBytes, 0, 5);
-            WriteLog($"Получен ход:   ({ReceivedMoveBytes[0]}, {ReceivedMoveBytes[1]}) ; ({ReceivedMoveBytes[2]}, {ReceivedMoveBytes[3]}) ; {ReceivedMoveBytes[4]} ");
-            if (ReceivedMoveBytes[0] == 111)
+            byte[] move = RecvMove(stream);
+            WriteLog($"Получен ход:   ({move[0]}, {move[1]}) ; ({move[2]}, {move[3]}) ; {move[4]} ");
+            if (move[0] == exit_code)
             {
-                WriteLog($"Противник вышел :(");
+                WriteLog($"Противник вышел");
                 board.GameOver(board.PlayerTeam, true);
                 return;
             }
-            ReceiveMove();
+            else
+            {
+                ExecuteReceivedMove(move);
+            }
         }
     }
 
     void WaitForStart()
     {
+        const byte till_waiting_ans = 1;
+        const byte cancel_waiting_ans = 0;
+
+        still_waiting = true;
         do
         {
             bool connect = TryConnect();
             if (connect) return;
-            else stream.Write(TillWaitingAnswer, 0, 1);
-        } while (TillWaitingAnswer[0] == 1);
+            else Networking.SendMessage((still_waiting) ? till_waiting_ans : cancel_waiting_ans, stream);
+        } while (still_waiting);
     }
 
     void StartGame(byte ans)
@@ -129,30 +131,17 @@ public class NetworkManager : MonoBehaviour
         return;
     }
 
-    void WriteLog(string messeage)
-    {
-        try
-        {
-            using (StreamWriter LogStream = new StreamWriter(LogFilePath, true))
-            {
-                LogStream.WriteLine(messeage);
-            }
-        }
-        catch (Exception) { }
-    }
-
     public void CanselWaiting()
     {
-        TillWaitingAnswer[0] = 0;
+        still_waiting = false;
         ServerCommunicator.Join();
         stream.Close();
         SceneManager.LoadScene(2);
     }
 
-    public void SendExit()
+    public void Exit()
     {
-        byte[] exit = new byte[5] { 111, 0, 0, 0, 0 };
-        stream.Write(exit, 0, 5);
+        SendExit(stream);
         stream.Close();
     }
 }
