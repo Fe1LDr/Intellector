@@ -120,14 +120,10 @@ public class NetworkGamesScene : MonoBehaviour
         string NameInput = AskForNameWindow.GetComponentInChildren<InputField>().text;
         Text text = AskForNameWindow.GetComponentInChildren<Text>();
 
-        if (String.IsNullOrEmpty(NameInput))
+        string error_mes;
+        if(!Settings.CheckName(NameInput, out error_mes))
         {
-            text.text = "Имя не должно быть пустым";
-            return;
-        }  
-        if (Encoding.Default.GetBytes(NameInput).Length > 20)
-        {
-            text.text = "Имя не должно быть длинне 20 символов";
+            text.text = error_mes;
             return;
         }
             

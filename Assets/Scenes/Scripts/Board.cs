@@ -12,8 +12,10 @@ public class Board : MonoBehaviour
     [SerializeField] private float tileSize;
 
     [Header("Materials")]
-    [SerializeField] private Material WhiteTeamMaterial;
-    [SerializeField] private Material BlackTeamMaterial;
+    [SerializeField] private MaterialSelector materialSelector;
+    private Material WhiteTeamMaterial;
+    private Material BlackTeamMaterial;
+
 
     [Header("UI")]
     [SerializeField] GameObject Progressor_end;
@@ -48,14 +50,15 @@ public class Board : MonoBehaviour
         x_offset = tileSize / Mathf.Sqrt(3) * 1.51f;
         y_offset = tileSize;
 
+        Settings settings = Settings.Load();
+        NetworkGame = settings.NetworkGame;
+        (WhiteTeamMaterial, BlackTeamMaterial) = materialSelector.GetCurrentMaterials(settings.Material);
+
         GenerateAllTiles();
         GenerateAllPieces();
 
         Turn = false;
         game_over = false;
-
-        Settings settings = Settings.Load();
-        NetworkGame = settings.NetworkGame;
     }
 
     void Update()
