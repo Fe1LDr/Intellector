@@ -17,6 +17,10 @@ public class NetworkManager : MonoBehaviour
     Thread ServerCommunicator;
 
     bool still_waiting;
+    bool ready_for_rematch = false;
+
+    public event Action ExitEvent;
+    public event Action RematchEvent;
     
 
     void Start()
@@ -76,7 +80,14 @@ public class NetworkManager : MonoBehaviour
         Vector2Int start = new Vector2Int(move[0], move[1]);
         Vector2Int end = new Vector2Int(move[2], move[3]);
         int transform_info = move[4];
-        board.MovePiece(start, end, true, transform_info);
+        try
+        {
+            board.MovePiece(start, end, true, transform_info);
+        }
+        catch (Exception e)
+        {
+            WriteLog(e.Message);
+        }
     }
 
     void MoveEventHandler(Vector2Int start, Vector2Int end, int transform_info)
@@ -88,20 +99,34 @@ public class NetworkManager : MonoBehaviour
     void ListenToServer()
     {
         const byte exit_code = 111;
+        const byte rematch_code = 222;
         while (true)
         {
             byte[] move = RecvMove(stream);
             WriteLog($"Получен ход:   ({move[0]}, {move[1]}) ; ({move[2]}, {move[3]}) ; {move[4]} ");
             if (move[0] == exit_code)
             {
-                WriteLog($"Противник вышел");
-                board.GameOver(board.PlayerTeam, true);
+                ExitReceived();
                 return;
             }
-            else
+            if (move[0] == rematch_code)
             {
-                ExecuteReceivedMove(move);
+                RematchReceived();
+                continue;
             }
+            ExecuteReceivedMove(move);
+        }
+
+        void ExitReceived()
+        {
+            WriteLog($"Противник вышел");
+            board.GameOver(board.PlayerTeam, true);
+            ExitEvent?.Invoke();
+        }
+        void RematchReceived()
+        {
+            ready_for_rematch = true;
+            RematchEvent?.Invoke();
         }
     }
 
@@ -139,9 +164,42 @@ public class NetworkManager : MonoBehaviour
         SceneManager.LoadScene(2);
     }
 
-    public void Exit()
+    public void AskRematch()
     {
-        SendExit(stream);
+        if (board.NetworkGame)
+        {
+            SendRematch();
+            Thread RematchWaiter = new Thread(WaitForRematch);
+            RematchWaiter.Start();
+        }
+        else
+        {
+            board.Restart();
+        }
+    }
+
+    private void WaitForRematch()
+    {
+        while (true)
+        {
+            if (ready_for_rematch)
+            {
+                board.Restart();
+                ready_for_rematch = false;
+                return;
+            }
+        }
+    }
+
+    public void SendExit()
+    {
+        const byte exit_code = 111;
+        SendMessageInGame(exit_code, stream);
         stream.Close();
+    }
+    public void SendRematch()
+    {
+        const byte rematch_code = 222;
+        SendMessageInGame(rematch_code, stream);
     }
 }

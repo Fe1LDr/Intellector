@@ -20,7 +20,7 @@ public class Board : MonoBehaviour
     [Header("UI")]
     [SerializeField] GameObject Progressor_end;
     [SerializeField] GameObject Around_Intellector;
-    [SerializeField] GameObject EndGame;
+    [SerializeField] EndGame EndGame;
 
     [NonSerialized] public bool NetworkGame;
     [NonSerialized] public bool PlayerTeam;
@@ -157,6 +157,35 @@ public class Board : MonoBehaviour
         return piece;
     }
 
+    //очистка
+    public void Restart()
+    {
+        DeleteAllPieces();
+        GenerateAllPieces();
+        
+        PlayerTeam = !PlayerTeam;
+        Turn = false;
+        game_over = false;
+        EndGame.Hide();
+    }
+    void DeleteAllPieces()
+    {
+        for (int i = 0; i < 9; i++)
+            for (int j = 0; j < pieces[i].Length; j++)
+                if (pieces[i][j] != null)
+                {
+                    Destroy(pieces[i][j].GetComponent<MeshRenderer>());
+                    pieces[i][j] = null;
+                }
+    }
+    void DeleteAllHighlights()
+    {
+        AvaibleMoves = null;
+        currentHover = -Vector2Int.one;
+        currentSelect = -Vector2Int.one;
+        lustMove1 = -Vector2Int.one;
+        lustMove2 = -Vector2Int.one;
+    }
 
     //операции с полями и слоями
     public Vector2Int LookUpTileIndex(GameObject hitInfo)
@@ -353,25 +382,12 @@ public class Board : MonoBehaviour
         }
     }
 
-
+    //конец игры
     public void GameOver(bool winner, bool ByExit = false)
     {
         if (game_over) return;
-
-        AvaibleMoves = null;
-        currentHover = -Vector2Int.one;
-        currentSelect = -Vector2Int.one;
         game_over = true;
-
-        Text[] text = EndGame.GetComponentsInChildren<Text>();
-        Text top_text = text[0];
-        Text low_text = text[1];
-
-
-        if (NetworkGame) low_text.text = (winner == PlayerTeam) ? "ВЫ ВЫИГРАЛИ" : "ВЫ ПРОИГРАЛИ";
-        else low_text.text = (winner) ? "ПОБЕДИЛИ ЧЁРНЫЕ" : "ПОБЕДИЛИ БЕЛЫЕ";
-        if (ByExit) top_text.text = "ПРОТИВНИК ВЫШЕЛ";
-
-        EndGame.SetActive(true);
+        DeleteAllHighlights();
+        EndGame.DisplayResult(NetworkGame, winner, PlayerTeam, ByExit);
     }
 }

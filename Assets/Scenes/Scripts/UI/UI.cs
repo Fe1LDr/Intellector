@@ -10,7 +10,7 @@ public class UI : MonoBehaviour
     public void Exit()
     {
         if (board.NetworkGame)
-            networkManager.Exit();
+            networkManager.SendExit();
         SceneManager.LoadScene(0);
     }
 }

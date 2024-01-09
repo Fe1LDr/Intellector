@@ -49,10 +49,9 @@ public class Networking
         return move_bytes;
     }
 
-    static public void SendExit(NetworkStream stream)
+    static public void SendMessageInGame(byte mes, NetworkStream stream)
     {
-        byte[] exit = new byte[5] { 111, 0, 0, 0, 0 };
-        stream.Write(exit, 0, 5);
+        byte[] send_bytes = new byte[5] { mes, 0, 0, 0, 0 };
+        stream.Write(send_bytes, 0, 1);
     }
-
 }
