@@ -9,7 +9,7 @@ public class Dominator : Piece
         List<Vector2Int> result = new List<Vector2Int>();
 
         //ходы вверх
-        for (int j = this.y + 1; j <= this.x + 6; j++)
+        for (int j = this.y + 1; j <= this.y + 6; j++)
         {
             if (j >= board.pieces[x].Length) break;                                             //верхн€€ граница
             if (board.pieces[x][j] != null && board.pieces[x][j].team == this.team) break;      //есть фигура и она союзна€
@@ -18,7 +18,7 @@ public class Dominator : Piece
             if (board.pieces[x][j] != null && board.pieces[x][j].team != this.team) break;      //есть фигура и она вражеска€
         }
         //ходы вниз
-        for (int j = this.y - 1; j >= this.x - 6; j--)
+        for (int j = this.y - 1; j >= this.y - 6; j--)
         {
             if (j < 0) break;                                                                   //нижн€€ граница
             if (board.pieces[x][j] != null && board.pieces[x][j].team == this.team) break;      //есть фигура и она союзна€
