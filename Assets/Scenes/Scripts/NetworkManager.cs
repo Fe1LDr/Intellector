@@ -21,25 +21,30 @@ public class NetworkManager : MonoBehaviour
 
     public event Action ExitEvent;
     public event Action RematchEvent;
+    public event Action GameStartEvent;
+
+    public delegate void TimeReceived(int time);
+    public event TimeReceived TimeEvent;
     
 
     void Start()
     {
         Settings settings = Settings.Load();
+        GameInfo gameInfo = GameInfo.Load(); 
         if (settings.NetworkGame)
         {
-            TcpClient client = new TcpClient(settings.ServerIP, 7001);
+            TcpClient client = new TcpClient(settings.ServerIP, Settings.server_port);
             stream = client.GetStream();
 
             WriteLog("Подключение к серверу");
             SendString(password, stream);
 
             byte wanted_id = Convert.ToByte(settings.Game_ID_To_Connect);
-            Networking.SendMessage(wanted_id, stream);
+            SendCode(wanted_id, stream);
 
             if (wanted_id == 0)
             {
-                SendString(settings.UserName, stream);
+                SendGameInfo(gameInfo, stream);
                 WaitScreen.SetActive(true);
 
                 ServerCommunicator = new Thread(WaitForStart);
@@ -58,7 +63,7 @@ public class NetworkManager : MonoBehaviour
         const byte white_team = 0;
         const byte black_team = 1;
 
-        byte server_ans = RecvMessage(stream);
+        byte server_ans = RecvCode(stream);
         WriteLog($"Получено сообщение: {server_ans}");
         if(server_ans == no_such_game_ans)
         {
@@ -68,8 +73,10 @@ public class NetworkManager : MonoBehaviour
         }
         if (server_ans == white_team || server_ans == black_team)
         {
+            GameInfo gameInfo = RecvGameInfo(stream);
+            gameInfo.Save();
             WriteLog($"Противник найден");
-            StartGame(server_ans);
+            MainTasks.AddTask(() => StartGame(server_ans));
             return true;
         }
         return false;
@@ -82,7 +89,7 @@ public class NetworkManager : MonoBehaviour
         int transform_info = move[4];
         try
         {
-            board.MovePiece(start, end, true, transform_info);
+           board.MovePiece(start, end, true, transform_info);
         }
         catch (Exception e)
         {
@@ -98,23 +105,40 @@ public class NetworkManager : MonoBehaviour
 
     void ListenToServer()
     {
+        const byte move_code = 10;
+        const byte time_code = 20;
+        const byte white_time_out_code = 30;
+        const byte black_time_out_code = 31;
         const byte exit_code = 111;
         const byte rematch_code = 222;
         while (true)
         {
-            byte[] move = RecvMove(stream);
-            WriteLog($"Получен ход:   ({move[0]}, {move[1]}) ; ({move[2]}, {move[3]}) ; {move[4]} ");
-            if (move[0] == exit_code)
+            byte code = RecvCode(stream);
+            switch (code)
             {
-                ExitReceived();
-                return;
+                case move_code:
+                    byte[] move = RecvMove(stream);
+                    WriteLog($"Получен ход:   ({move[0]}, {move[1]}) ; ({move[2]}, {move[3]}) ; {move[4]} ");
+                    MainTasks.AddTask(() => ExecuteReceivedMove(move));
+                    break;
+                case time_code:
+                    int time = RecvInt(stream);
+                    WriteLog($"осталось времени: {time}");
+                    MainTasks.AddTask(() => TimeEvent?.Invoke(time));
+                    break;
+                case exit_code:
+                    MainTasks.AddTask(() => ExitReceived());
+                    break;
+                case white_time_out_code:
+                    MainTasks.AddTask(() => board.GameOver(true));
+                    break;
+                case black_time_out_code:
+                    MainTasks.AddTask(() => board.GameOver(false));
+                    break;
+                case rematch_code:
+                    MainTasks.AddTask(() => RematchReceived());
+                    break;
             }
-            if (move[0] == rematch_code)
-            {
-                RematchReceived();
-                continue;
-            }
-            ExecuteReceivedMove(move);
         }
 
         void ExitReceived()
@@ -140,7 +164,7 @@ public class NetworkManager : MonoBehaviour
         {
             bool connect = TryConnect();
             if (connect) return;
-            else Networking.SendMessage((still_waiting) ? till_waiting_ans : cancel_waiting_ans, stream);
+            else SendCode((still_waiting) ? till_waiting_ans : cancel_waiting_ans, stream);
         } while (still_waiting);
     }
 
@@ -153,6 +177,7 @@ public class NetworkManager : MonoBehaviour
         Thread ServerListener = new Thread(() => ListenToServer());
         ServerListener.Start();
         WaitScreen.SetActive(false);
+        GameStartEvent?.Invoke();
         return;
     }
 
@@ -184,7 +209,7 @@ public class NetworkManager : MonoBehaviour
         {
             if (ready_for_rematch)
             {
-                board.Restart();
+                MainTasks.AddTask(() => board.Restart());
                 ready_for_rematch = false;
                 return;
             }
@@ -194,12 +219,12 @@ public class NetworkManager : MonoBehaviour
     public void SendExit()
     {
         const byte exit_code = 111;
-        SendMessageInGame(exit_code, stream);
+        SendCode(exit_code, stream);
         stream.Close();
     }
     public void SendRematch()
     {
         const byte rematch_code = 222;
-        SendMessageInGame(rematch_code, stream);
+        SendCode(rematch_code, stream);
     }
 }

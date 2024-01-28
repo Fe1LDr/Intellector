@@ -13,13 +13,12 @@ public class NetworkGamesScene : MonoBehaviour
 {
     [SerializeField] GameObject NetworkGamePrefab;
     [SerializeField] GameObject Content;
-    [SerializeField] GameObject AskForNameWindow;
+    [SerializeField] GameObject GameInfoWindow;
     [SerializeField] GameObject ErrorWindow;
-    [SerializeField] Color DefaultColor;
+    [SerializeField] public Color DefaultColor;
     [SerializeField] public Color SelectedColor;
 
     List<GameObject> Items = new List<GameObject>();
-    List<Button> Buttons = new List<Button>();
     public uint selected_id;
 
     void Start()
@@ -29,35 +28,46 @@ public class NetworkGamesScene : MonoBehaviour
 
     public void ReadGamesFromServer()
     {
-        ClearItems();
-        NetworkStream stream;
         const byte games_list_request = 100;
+        ClearItems();
 
         try
         {
             Settings settings = Settings.Load();
-            TcpClient server = new TcpClient(settings.ServerIP, 7001);
-            stream = server.GetStream();
+            TcpClient server = new TcpClient(settings.ServerIP, Settings.server_port);
+            NetworkStream stream = server.GetStream();
 
             SendString(password, stream);
-            Networking.SendMessage(games_list_request, stream);
-            uint GameCount = RecvMessage(stream);
+            SendCode(games_list_request, stream);
+            if (!CheckVersion(stream)) return;
+            int GameCount = RecvInt(stream);
 
             for (int i = 0; i < GameCount; i++)
             {
-                ReadGame();
+                GameInfo game = RecvGameInfo(stream);
+                DisplayGame(game);
             }
             server.Close();
         }
-        catch (Exception)
+
+        catch (Exception e)
         {
+            Debug.LogException(e);
             ErrorWindow.SetActive(true);
         }
 
-        void ReadGame()
+        bool CheckVersion(NetworkStream stream)
         {
-            GameInfo game = RecvGameInfo(stream);
-            DisplayGame(game);
+            SendInt(Settings.version, stream);
+            int server_version = RecvInt(stream);
+            if (Settings.version != server_version)
+            {
+                ErrorWindow.SetActive(true);
+                ErrorWindow.GetComponentInChildren<Text>().text = $"Неподходящая версия\nВерсия сервера - {VerToStr(server_version)}\nИспользуемая версия клиента - {VerToStr(Settings.version)}\n";
+            }
+            return Settings.version == server_version;
+
+            string VerToStr(int ver) => $"{ver/10}.{ver%10}";
         }
 
         void ClearItems()
@@ -67,10 +77,9 @@ public class NetworkGamesScene : MonoBehaviour
                 Destroy(item);
             }
             Items.Clear();
-            Buttons.Clear();
         }
     }
-
+        
     public void CreateNewGame()
     {
         StartNetworkGame(0);
@@ -87,57 +96,46 @@ public class NetworkGamesScene : MonoBehaviour
         Settings settings = Settings.Load();
         settings.NetworkGame = true;
         settings.Game_ID_To_Connect = ID;
-
         settings.Save();
-        if (String.IsNullOrEmpty(settings.UserName))
+
+        if (ID == 0)
         {
-            AskForNameWindow.SetActive(true);
-            return;
+            Content.SetActive(false);
+            GameInfoWindow.SetActive(true);
         }
-        SceneManager.LoadScene(1);
+            
+        else SceneManager.LoadScene(1);
     }
 
     void DisplayGame(GameInfo game)
     {
-        Transform content_transform = Content.GetComponent<Transform>();
         GameObject net_game_obj = Instantiate(NetworkGamePrefab);
         NetworkGameItem net_game = net_game_obj.GetComponent<NetworkGameItem>();
 
         net_game.GameInfo = game;
         net_game.NetworkGameScene = this;
-        net_game_obj.transform.SetParent(content_transform, transform);
-        net_game_obj.GetComponentInChildren<Image>().color = new Color(DefaultColor.r, DefaultColor.g, DefaultColor.b, 1f);
-
-        Text text = net_game_obj.GetComponentInChildren<Text>();
-        text.text = game.Name;
+        net_game_obj.transform.SetParent(Content.GetComponent<Transform>(), transform);
+        net_game.DisplayGameInfo();
+        net_game.SetDefaultColor();
         Items.Add(net_game_obj);
-        Buttons.Add(net_game_obj.GetComponent<Button>());
     }
 
-    void TestFeel(uint id) => DisplayGame(new GameInfo(id, $"Test {id}"));
-    public void ConfirmNameInput()
+    void TestFeel(uint id) => DisplayGame(new GameInfo { ID = id, Color = ColorChoice.random, Name = $"Test{id}", TimeContol = new(0,0)});
+    public void ConfirmClick()
     {
-        string NameInput = AskForNameWindow.GetComponentInChildren<InputField>().text;
-        Text text = AskForNameWindow.GetComponentInChildren<Text>();
-
-        string error_mes;
-        if(!Settings.CheckName(NameInput, out error_mes))
+        GameInfo gameInfo = GameInfoWindow.GetComponent<GameInfoWindow>().GetGameInfo();
+        if (gameInfo != null)
         {
-            text.text = error_mes;
-            return;
+            gameInfo.Save();
+            SceneManager.LoadScene(1);
         }
-            
-        Settings settings = Settings.Load();
-        settings.UserName = NameInput; 
-        settings.Save();
-        SceneManager.LoadScene(1);
     }
 
-    public void RemoveSelection()
+    public void SetDefaultColors()
     {
-        foreach(Button button in Buttons)
+        foreach(GameObject game_obj in Items)
         {
-            button.GetComponent<Image>().color = new Color(DefaultColor.r, DefaultColor.g, DefaultColor.b, 1f);
+            game_obj.GetComponent<NetworkGameItem>().SetDefaultColor();
         }
     }
 
