@@ -17,7 +17,7 @@ public class Settings
     public string ServerIP { get; set; }
     public uint Game_ID_To_Connect { get; set; }
     public bool NetworkGame { get; set; }
-    
+    public bool AIGame { get; set; }
     public string UserName { get; set; }
     public AvaibleMaterials Material { get; set; }
 

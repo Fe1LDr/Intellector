@@ -8,7 +8,7 @@ public class MouseController : MonoBehaviour
     [SerializeField] private Board board;
     private Camera currentCamera;
 
-    private static string[] layers_names = {"Tile","HoverTile","SelectedTile","Avaible","HoverAvaible"};
+    private static string[] layers_names = {"Tile","HoverTile","SelectedTile","Avaible","HoverAvaible","HoverSelected"};
 
     void Update()
     {
@@ -23,7 +23,7 @@ public class MouseController : MonoBehaviour
         Ray ray = currentCamera.ScreenPointToRay(Input.mousePosition);
 
 
-        if (Physics.Raycast(ray, out info, 500, LayerMask.GetMask(new string[] { "Tile", "HoverTile", "Avaible", "HoverAvaible" })))
+        if (Physics.Raycast(ray, out info, 500, LayerMask.GetMask(layers_names)))
         {
             //Выделение поля
             Vector2Int hitPosition = board.LookUpTileIndex(info.transform.gameObject);

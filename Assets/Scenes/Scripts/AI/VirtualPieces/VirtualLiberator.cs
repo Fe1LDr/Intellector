@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Liberator : Piece
+public class VirtualLiberator : VirtualPiece
 {
     public override List<Vector2Int> GetAvaibleMooves()
     {

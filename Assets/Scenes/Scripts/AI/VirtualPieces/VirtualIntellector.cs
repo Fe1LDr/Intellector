@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Intellector : Piece
+public class VirtualIntellector : VirtualPiece
 {
     public override List<Vector2Int> GetAvaibleMooves()
     {

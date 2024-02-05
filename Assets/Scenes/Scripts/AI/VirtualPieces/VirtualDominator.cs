@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Dominator : Piece
+public class VirtualDominator : VirtualPiece
 {
     public override List<Vector2Int> GetAvaibleMooves()
     {

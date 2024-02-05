@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Defensor: Piece
+public class VirtualDefensor : VirtualPiece
 {
     public override List<Vector2Int> GetAvaibleMooves()
     {

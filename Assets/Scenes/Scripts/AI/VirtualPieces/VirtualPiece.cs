@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Piece : MonoBehaviour
+public abstract class VirtualPiece
 {
     public PieceType type;
     public int x;
     public int y;
     public bool team;
-    public Piece[][] board;
+    public VirtualPiece[][] board;
 
     public bool HasIntellectorNearby()
     {

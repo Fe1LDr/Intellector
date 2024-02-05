@@ -381,7 +381,7 @@ GameObject:
   - component: {fileID: 305701708}
   - component: {fileID: 305701707}
   m_Layer: 0
-  m_Name: Start
+  m_Name: LocalGame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -454,8 +454,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 893558324}
         m_TargetAssemblyTypeName: Scenes, GameAssembly
-        m_MethodName: StartGame
-        m_Mode: 6
+        m_MethodName: LocalGame
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -892,8 +892,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u041F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0438\u0442\u044C\u0441\u044F
-    \u043A \u0441\u0435\u0442\u0435\u0432\u043E\u0439 \u0438\u0433\u0440\u0435"
+  m_Text: "\u0418\u0433\u0440\u0430 \u043F\u0440\u043E\u0442\u0438\u0432 \u0418\u0418"
 --- !u!222 &795710010
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1909,7 +1908,7 @@ GameObject:
   - component: {fileID: 1643584826}
   - component: {fileID: 1643584825}
   m_Layer: 0
-  m_Name: inwait
+  m_Name: AIGame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1982,8 +1981,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 893558324}
         m_TargetAssemblyTypeName: Scenes, GameAssembly
-        m_MethodName: ChangeScenes
-        m_Mode: 3
+        m_MethodName: AIGame
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

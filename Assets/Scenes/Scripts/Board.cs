@@ -67,21 +67,25 @@ public class Board : MonoBehaviour
             for (int j = 0; j < tiles[i].Length; j++)
             {
                 Vector2Int coor = new Vector2Int(i, j);
-                if (coor == currentSelect) tiles[coor.x][coor.y].layer = LayerMask.NameToLayer("SelectedTile");
+                string layer;
+                if (coor == currentSelect)
+                {
+                    if (coor == currentHover) layer = "HoverSelected";
+                    else layer = "SelectedTile";
+                }
                 else if(AvaibleMoves != null && AvaibleMoves.Contains(coor))
                 {
-                    if(coor == currentHover)
-                        tiles[coor.x][coor.y].layer = LayerMask.NameToLayer("HoverAvaible");
-                    else
-                        tiles[coor.x][coor.y].layer = LayerMask.NameToLayer("Avaible");
+                    if (coor == currentHover)   layer = "HoverAvaible";
+                    else layer = "Avaible";
                 }
                 else if(coor == currentHover)
-                    tiles[coor.x][coor.y].layer = LayerMask.NameToLayer("HoverTile");
+                    layer = "HoverTile";
                 else if (coor == lustMove1 || coor == lustMove2)
-                    tiles[coor.x][coor.y].layer = LayerMask.NameToLayer("SelectedTile");
+                    layer = "SelectedTile";
                 else
-                    tiles[coor.x][coor.y].layer = LayerMask.NameToLayer("Tile");
+                    layer = "Tile";
 
+                tiles[coor.x][coor.y].layer = LayerMask.NameToLayer(layer);
             }
     }
     public Vector3 TransformCoordinates(int x, int y)
@@ -145,7 +149,7 @@ public class Board : MonoBehaviour
         piece = Instantiate(piecesPrefabs[(int)type], transform).GetComponent<Piece>();
         piece.type = type;
         piece.team = team;
-        piece.board = this;
+        piece.board = this.pieces;
         piece.x = x;
         piece.y = y;
         piece.transform.position = TransformCoordinates(x, y);

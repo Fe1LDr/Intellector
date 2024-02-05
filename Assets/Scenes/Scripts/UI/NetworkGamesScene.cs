@@ -95,6 +95,7 @@ public class NetworkGamesScene : MonoBehaviour
     {
         Settings settings = Settings.Load();
         settings.NetworkGame = true;
+        settings.AIGame = false;
         settings.Game_ID_To_Connect = ID;
         settings.Save();
 
