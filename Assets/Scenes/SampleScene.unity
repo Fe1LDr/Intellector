@@ -308,7 +308,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 86350707}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.098798335, y: 0.0045839073, z: -0.00447792, w: 0.9950869}
+  m_LocalRotation: {x: -0.09879838, y: 0.004583888, z: -0.0044779014, w: 0.99508685}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1681,7 +1681,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.33100018, y: 0.0060468805, z: -0.0021211312, w: 0.94360894}
+  m_LocalRotation: {x: 0.33100018, y: 0.0060468563, z: -0.0021211226, w: 0.94360894}
   m_LocalPosition: {x: 10.009601, y: 19.759998, z: -16.157948}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1995,7 +1995,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1093103410}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.116882116, y: 0.004664578, z: -0.00439378, w: 0.9931252}
+  m_LocalRotation: {x: -0.11688216, y: 0.004664609, z: -0.0043938085, w: 0.99312514}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3084,7 +3084,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2142865513}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.13487963, y: 0.0047435416, z: -0.004308454, w: 0.99084127}
+  m_LocalRotation: {x: -0.1348796, y: 0.0047435206, z: -0.0043084356, w: 0.99084127}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3140,6 +3140,30 @@ PrefabInstance:
       propertyPath: Around_Intellector
       value: 
       objectReference: {fileID: 234183487}
+    - target: {fileID: 958176781406646849, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
+      propertyPath: piecesPrefabs.Array.data[0]
+      value: 
+      objectReference: {fileID: 3098160627348155019, guid: 0d7b869f3c170894987c0bb0abb3b5e1, type: 3}
+    - target: {fileID: 958176781406646849, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
+      propertyPath: piecesPrefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: 5613614577265383081, guid: 4880204f63b10ce4ab9e81c4ba25d506, type: 3}
+    - target: {fileID: 958176781406646849, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
+      propertyPath: piecesPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 1683711937275641648, guid: a1a690b649915ad4d8713bac7652c08d, type: 3}
+    - target: {fileID: 958176781406646849, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
+      propertyPath: piecesPrefabs.Array.data[3]
+      value: 
+      objectReference: {fileID: 3802074769640215051, guid: 1b1354960f7c53546ab0aa27a6e70a08, type: 3}
+    - target: {fileID: 958176781406646849, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
+      propertyPath: piecesPrefabs.Array.data[4]
+      value: 
+      objectReference: {fileID: 6615136682099356554, guid: 2e3b9dcf00c25194591fda5b4e86542b, type: 3}
+    - target: {fileID: 958176781406646849, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
+      propertyPath: piecesPrefabs.Array.data[5]
+      value: 
+      objectReference: {fileID: 3921855789588228246, guid: c472eae9aa6195844b6ef2773229b403, type: 3}
     - target: {fileID: 2766550668456794340, guid: 62c306f32c8f920419d00c3f3d2d0725, type: 3}
       propertyPath: m_Name
       value: Board
