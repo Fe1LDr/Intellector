@@ -155,7 +155,7 @@ public class Board : MonoBehaviour
         piece.transform.position = TransformCoordinates(x, y);
         if((type == PieceType.agressor) && (team == true))
         {
-            piece.transform.rotation = Quaternion.Euler(-90, 0, 0);
+            piece.transform.rotation = Quaternion.Euler(0, 90, 0);
         }
         piece.GetComponent<MeshRenderer>().materials = (team == true) ? new Material[]{ BlackTeamMaterial} : new Material[] { WhiteTeamMaterial };
         return piece;
