@@ -27,6 +27,8 @@ public class Board : MonoBehaviour
 
     public delegate void MoveDelegate(Vector2Int start, Vector2Int end, int transform_info);
     public event MoveDelegate MoveEvent;
+    public event Action RestartEvent;
+    public event Action EndGameEvent;
 
     [NonSerialized] public bool Turn;
     [NonSerialized] public bool game_over;
@@ -42,8 +44,6 @@ public class Board : MonoBehaviour
 
     private static float x_offset;
     private static float y_offset;
-
-
 
     public void Awake()
     {
@@ -67,21 +67,25 @@ public class Board : MonoBehaviour
             for (int j = 0; j < tiles[i].Length; j++)
             {
                 Vector2Int coor = new Vector2Int(i, j);
-                if (coor == currentSelect) tiles[coor.x][coor.y].layer = LayerMask.NameToLayer("SelectedTile");
+                string layer;
+                if (coor == currentSelect)
+                {
+                    if (coor == currentHover) layer = "HoverSelected";
+                    else layer = "SelectedTile";
+                }
                 else if(AvaibleMoves != null && AvaibleMoves.Contains(coor))
                 {
-                    if(coor == currentHover)
-                        tiles[coor.x][coor.y].layer = LayerMask.NameToLayer("HoverAvaible");
-                    else
-                        tiles[coor.x][coor.y].layer = LayerMask.NameToLayer("Avaible");
+                    if (coor == currentHover)   layer = "HoverAvaible";
+                    else layer = "Avaible";
                 }
                 else if(coor == currentHover)
-                    tiles[coor.x][coor.y].layer = LayerMask.NameToLayer("HoverTile");
+                    layer = "HoverTile";
                 else if (coor == lustMove1 || coor == lustMove2)
-                    tiles[coor.x][coor.y].layer = LayerMask.NameToLayer("SelectedTile");
+                    layer = "SelectedTile";
                 else
-                    tiles[coor.x][coor.y].layer = LayerMask.NameToLayer("Tile");
+                    layer = "Tile";
 
+                tiles[coor.x][coor.y].layer = LayerMask.NameToLayer(layer);
             }
     }
     public Vector3 TransformCoordinates(int x, int y)
@@ -145,7 +149,7 @@ public class Board : MonoBehaviour
         piece = Instantiate(piecesPrefabs[(int)type], transform).GetComponent<Piece>();
         piece.type = type;
         piece.team = team;
-        piece.board = this;
+        piece.board = this.pieces;
         piece.x = x;
         piece.y = y;
         piece.transform.position = TransformCoordinates(x, y);
@@ -167,6 +171,7 @@ public class Board : MonoBehaviour
         Turn = false;
         game_over = false;
         EndGame.Hide();
+        RestartEvent?.Invoke();
     }
     void DeleteAllPieces()
     {
@@ -248,7 +253,8 @@ public class Board : MonoBehaviour
     bool ChekAndAskForTransformaton(Vector2Int start, Vector2Int end)
     {
         if ((pieces[start.x][start.y].type == PieceType.progressor) && // если ходил прогрессор
-        ((pieces[start.x][start.y].team == false && (end.y == 6)) || (pieces[start.x][start.y].team == true && (end.y == 0) && (end.x % 2 == 0)))) //и он дошёл до поля превращения
+        ((pieces[start.x][start.y].team == false && (end.y == 6)) || (pieces[start.x][start.y].team == true && (end.y == 0) && (end.x % 2 == 0))) //и он дошёл до поля превращения
+        && ((pieces[end.x][end.y] == null) || (pieces[end.x][end.y].type != PieceType.intellector))) //и мы не съели интеллектора
         {
             Progressor_end.SetActive(true);
             StartCoroutine(WaitForPieceType(start, end));
@@ -256,8 +262,10 @@ public class Board : MonoBehaviour
             return true;
         }
 
-        //если едим вражескую фигуру и рядом есть интеллектор, и ходил не прогрессор, и мы съели не интеллектора
-        else if (pieces[end.x][end.y] != null && (pieces[end.x][end.y].team != pieces[start.x][start.y].team) && (pieces[start.x][start.y].HasIntellectorNearby() && (pieces[start.x][start.y].type!=PieceType.progressor) && (pieces[end.x][end.y].type != PieceType.intellector)))
+        else if (pieces[end.x][end.y] != null && (pieces[end.x][end.y].team != pieces[start.x][start.y].team) //если едим вражескую фигуру
+            && (pieces[start.x][start.y].HasIntellectorNearby()) //и рядом есть интеллектор
+            && (pieces[start.x][start.y].type!=PieceType.progressor) //и ходил не прогрессор
+            && (pieces[end.x][end.y].type != PieceType.intellector)) //и мы съели не интеллектора
         {
             // то можно превратиться в съеденную фигуру
             Around_Intellector.SetActive(true);
@@ -389,5 +397,6 @@ public class Board : MonoBehaviour
         game_over = true;
         DeleteAllHighlights();
         EndGame.DisplayResult(NetworkGame, winner, PlayerTeam, ByExit);
+        EndGameEvent?.Invoke();
     }
 }

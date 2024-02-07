@@ -8,34 +8,34 @@ public class Progressor : Piece
     {
         List<Vector2Int> result = new List<Vector2Int>();
 
-        for(int i = this.x - 1; i <= this.x + 1; i++)
+        for(int i = x - 1; i <= x + 1; i++)
         {
             if (i < 0) continue;                                                                        //левая граница
             if (i > 8) continue;                                                                        //правая граница
 
-            for (int j = this.y - 1; j <= this.y + 1; j++)
+            for (int j = y - 1; j <= y + 1; j++)
             {
                 if (j < 0) continue;                                                                    //нижняя граница
-                if (j >= board.pieces[i].Length) continue;                                              //верхняя граница
+                if (j >= board[i].Length) continue;                                              //верхняя граница
 
-                if (this.x == i && this.y == j) continue;                                               //клетка с фигурой
-                if (this.x % 2 == 0 && this.y + 1 == j && this.x != i) continue;                        //две лишние клетки сверху
-                if (this.x % 2 == 1 && this.y - 1 == j && this.x != i) continue;                        //две лишние клетки снизу
+                if (x == i && y == j) continue;                                                         //клетка с фигурой
+                if (x % 2 == 0 && y + 1 == j && x != i) continue;                                       //две лишние клетки сверху
+                if (x % 2 == 1 && y - 1 == j && x != i) continue;                                       //две лишние клетки снизу
 
-                if (board.pieces[i][j] != null && board.pieces[i][j].team == this.team) continue;       //есть фигура и она союзная
+                if (board[i][j] != null && board[i][j].team == team) continue;            //есть фигура и она союзная
 
 
                 //перемещение чёрных
-                if (!this.team)
+                if (!team)
                 {
-                    if (this.x % 2 == 0 && this.y - 1 == j) continue;
-                    if (this.x % 2 == 1 && this.y + 1 != j) continue;
+                    if (x % 2 == 0 && y - 1 == j) continue;
+                    if (x % 2 == 1 && y + 1 != j) continue;
                 }
                 //перемещение белых
-                if (this.team)
+                if (team)
                 {
-                    if (this.x % 2 == 0 && this.y - 1 != j) continue;
-                    if (this.x % 2 == 1 && this.y + 1 == j) continue;
+                    if (x % 2 == 0 && y - 1 != j) continue;
+                    if (x % 2 == 1 && y + 1 == j) continue;
                 }
                 result.Add(new Vector2Int(i, j));
             }
