@@ -8,64 +8,64 @@ public class Dominator : Piece
     {
         List<Vector2Int> result = new List<Vector2Int>();
 
-        //ходы вверх
+        //ГµГ®Г¤Г» ГўГўГҐГ°Гµ
         for (int j = y + 1; j < board[x].Length; j++)
         {
-            if (board[x][j] != null && board[x][j].team == team) break;      //есть фигура и она союзная
+            if (board[x][j] != null && board[x][j].team == team) break;      //ГҐГ±ГІГј ГґГЁГЈГіГ°Г  ГЁ Г®Г­Г  Г±Г®ГѕГ§Г­Г Гї
             result.Add(new Vector2Int(x, j));
-            if (board[x][j] != null && board[x][j].team != team) break;      //есть фигура и она вражеская
+            if (board[x][j] != null && board[x][j].team != team) break;      //ГҐГ±ГІГј ГґГЁГЈГіГ°Г  ГЁ Г®Г­Г  ГўГ°Г Г¦ГҐГ±ГЄГ Гї
         }
 
-        //ходы вниз
+        //ГµГ®Г¤Г» ГўГ­ГЁГ§
         for (int j = y - 1; j >= 0; j--)
         {
-            if (board[x][j] != null && board[x][j].team == team) break;      //есть фигура и она союзная
+            if (board[x][j] != null && board[x][j].team == team) break;      //ГҐГ±ГІГј ГґГЁГЈГіГ°Г  ГЁ Г®Г­Г  Г±Г®ГѕГ§Г­Г Гї
             result.Add(new Vector2Int(x, j));
-            if (board[x][j] != null && board[x][j].team != team) break;      //есть фигура и она вражеская
+            if (board[x][j] != null && board[x][j].team != team) break;      //ГҐГ±ГІГј ГґГЁГЈГіГ°Г  ГЁ Г®Г­Г  ГўГ°Г Г¦ГҐГ±ГЄГ Гї
         }
 
-        //ходы по диагонали вверх вправо
+        //ГµГ®Г¤Г» ГЇГ® Г¤ГЁГ ГЈГ®Г­Г Г«ГЁ ГўГўГҐГ°Гµ ГўГЇГ°Г ГўГ®
         for (int i = x + 1, j = y; i <= 8; i++)
         {
             if (i % 2 == 0) j++;
-            if (j >= board[i].Length) break;                                             //верхняя граница
+            if (j >= board[i].Length) break;                                             //ГўГҐГ°ГµГ­ГїГї ГЈГ°Г Г­ГЁГ¶Г 
 
-            if (board[i][j] != null && board[i][j].team == team) break;      //есть фигура и она союзная
+            if (board[i][j] != null && board[i][j].team == team) break;      //ГҐГ±ГІГј ГґГЁГЈГіГ°Г  ГЁ Г®Г­Г  Г±Г®ГѕГ§Г­Г Гї
             result.Add(new Vector2Int(i, j));
-            if (board[i][j] != null && board[i][j].team != team) break;      //есть фигура и она вражеская
+            if (board[i][j] != null && board[i][j].team != team) break;      //ГҐГ±ГІГј ГґГЁГЈГіГ°Г  ГЁ Г®Г­Г  ГўГ°Г Г¦ГҐГ±ГЄГ Гї
         }
 
-        //ходы по диагонали вниз вправо
+        //ГµГ®Г¤Г» ГЇГ® Г¤ГЁГ ГЈГ®Г­Г Г«ГЁ ГўГ­ГЁГ§ ГўГЇГ°Г ГўГ®
         for (int i = x + 1, j = y; i <= 8; i++)
         {
             if (i % 2 == 1) j--;
-            if (j < 0) break;                                                                   //нижняя граница
+            if (j < 0) break;                                                                   //Г­ГЁГ¦Г­ГїГї ГЈГ°Г Г­ГЁГ¶Г 
 
-            if (board[i][j] != null && board[i][j].team == team) break;      //есть фигура и она союзная
+            if (board[i][j] != null && board[i][j].team == team) break;      //ГҐГ±ГІГј ГґГЁГЈГіГ°Г  ГЁ Г®Г­Г  Г±Г®ГѕГ§Г­Г Гї
             result.Add(new Vector2Int(i, j));
-            if (board[i][j] != null && board[i][j].team != team) break;      //есть фигура и она вражеская
+            if (board[i][j] != null && board[i][j].team != team) break;      //ГҐГ±ГІГј ГґГЁГЈГіГ°Г  ГЁ Г®Г­Г  ГўГ°Г Г¦ГҐГ±ГЄГ Гї
         }
 
-        //ходы по диагонали вверх влево
+        //ГµГ®Г¤Г» ГЇГ® Г¤ГЁГ ГЈГ®Г­Г Г«ГЁ ГўГўГҐГ°Гµ ГўГ«ГҐГўГ®
         for (int i = x - 1, j = y; i >= 0; i--)
         {
             if (i % 2 == 0) j++;
-            if (j >= board[i].Length) break;                                             //верхняя граница
+            if (j >= board[i].Length) break;                                             //ГўГҐГ°ГµГ­ГїГї ГЈГ°Г Г­ГЁГ¶Г 
 
-            if (board[i][j] != null && board[i][j].team == team) break;      //есть фигура и она союзная
+            if (board[i][j] != null && board[i][j].team == team) break;      //ГҐГ±ГІГј ГґГЁГЈГіГ°Г  ГЁ Г®Г­Г  Г±Г®ГѕГ§Г­Г Гї
             result.Add(new Vector2Int(i, j));
-            if (board[i][j] != null && board[i][j].team != team) break;      //есть фигура и она вражеская
+            if (board[i][j] != null && board[i][j].team != team) break;      //ГҐГ±ГІГј ГґГЁГЈГіГ°Г  ГЁ Г®Г­Г  ГўГ°Г Г¦ГҐГ±ГЄГ Гї
         }
 
-        //ходы по диагонали вниз влево
+        //ГµГ®Г¤Г» ГЇГ® Г¤ГЁГ ГЈГ®Г­Г Г«ГЁ ГўГ­ГЁГ§ ГўГ«ГҐГўГ®
         for (int i = x - 1, j = y; i >= 0; i--) 
         {
             if (i % 2 == 1) j--;
-            if (j < 0) break;                                                                   //нижняя граница
+            if (j < 0) break;                                                                   //Г­ГЁГ¦Г­ГїГї ГЈГ°Г Г­ГЁГ¶Г 
 
-            if (board[i][j] != null && board[i][j].team == team) break;      //есть фигура и она союзная
+            if (board[i][j] != null && board[i][j].team == team) break;      //ГҐГ±ГІГј ГґГЁГЈГіГ°Г  ГЁ Г®Г­Г  Г±Г®ГѕГ§Г­Г Гї
             result.Add(new Vector2Int(i, j));
-            if (board[i][j] != null && board[i][j].team != team) break;      //есть фигура и она вражеская
+            if (board[i][j] != null && board[i][j].team != team) break;      //ГҐГ±ГІГј ГґГЁГЈГіГ°Г  ГЁ Г®Г­Г  ГўГ°Г Г¦ГҐГ±ГЄГ Гї
         }
 
         return result;
