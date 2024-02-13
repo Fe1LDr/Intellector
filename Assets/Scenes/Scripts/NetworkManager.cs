@@ -30,9 +30,10 @@ public class NetworkManager : MonoBehaviour
     void Start()
     {
         Settings settings = Settings.Load();
-        GameInfo gameInfo = GameInfo.Load(); 
         if (settings.NetworkGame)
         {
+            GameInfo gameInfo = GameInfo.Load();
+
             TcpClient client = new TcpClient(settings.ServerIP, Settings.server_port);
             stream = client.GetStream();
 
