@@ -74,12 +74,12 @@ public class TimeControlView : MonoBehaviour
     private void DisplayOpponentTime(int time)
     {
         opponent_time = time;
-        MainTasks.AddTask(() => OpponentTime.text = TimeToString(time));
+        MainTasks.AddTask(() => { if (OpponentTime != null) OpponentTime.text = TimeToString(time); });
     }
     private void DisplayMyTime(int time)
     {
         my_time = time;
-        MainTasks.AddTask(() => MyTime.text = TimeToString(time));
+        MainTasks.AddTask(() => { if (MyTime != null) MyTime.text = TimeToString(time); });
     } 
     private void DisplayOpponentTurn()
     {

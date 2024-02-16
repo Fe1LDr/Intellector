@@ -34,7 +34,7 @@ public class NetworkGamesScene : MonoBehaviour
         try
         {
             Settings settings = Settings.Load();
-            TcpClient server = new TcpClient(settings.ServerIP, Settings.server_port);
+            TcpClient server = new TcpClient(Settings.server_IP, Settings.server_port);
             NetworkStream stream = server.GetStream();
 
             SendString(password, stream);

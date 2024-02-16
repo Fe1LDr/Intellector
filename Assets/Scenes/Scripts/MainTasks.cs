@@ -8,15 +8,20 @@ public class MainTasks : MonoBehaviour
 {
     private static Queue<Action> tasks  = new Queue<Action>();
 
-    void Update()
+    private void Update()
     {
-        if(tasks.Count != 0)
+        try
         {
-            Action task = tasks.Dequeue();
-            task();
+            if (tasks.Count != 0)
+            {
+                Action task = tasks.Dequeue();
+                task();
+            }
         }
+        catch (Exception e) { LogWriter.WriteLog(e.ToString() + e.Source + e.StackTrace); }
     }
 
+    
     public static void ExecuteTask(Action task)
     {
         AddTask(task);

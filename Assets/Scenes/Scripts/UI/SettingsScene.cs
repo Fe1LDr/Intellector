@@ -26,7 +26,7 @@ public class SettingsScene : MonoBehaviour
     }
 
     public void InputChanged() => CheckName();
-    bool CheckName()
+    private bool CheckName()
     {
         string error_mes;
         bool valid = Settings.CheckName(NameInput.text, out error_mes);
@@ -39,6 +39,7 @@ public class SettingsScene : MonoBehaviour
         {
             settings.UserName = NameInput.text;
             settings.Save();
+            Exit();
         }
     }
     public void CanselButtonClick()

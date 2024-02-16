@@ -34,7 +34,7 @@ public class NetworkManager : MonoBehaviour
         {
             GameInfo gameInfo = GameInfo.Load();
 
-            TcpClient client = new TcpClient(settings.ServerIP, Settings.server_port);
+            TcpClient client = new TcpClient(Settings.server_IP, Settings.server_port);
             stream = client.GetStream();
 
             WriteLog("Подключение к серверу");

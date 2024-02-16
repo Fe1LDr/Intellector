@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class Scenes: MonoBehaviour
 {
-    // Start is called before the first frame update
     public void ChangeScenes(int numberScrenes)
     {
         SceneManager.LoadScene(numberScrenes);
@@ -16,7 +15,6 @@ public class Scenes: MonoBehaviour
     }
 
     public void LocalGame() => StartGame(false, false);
-    public void NetworkGame() => StartGame(true, false);
     public void AIGame() => StartGame(false, true);
     private void StartGame(bool network, bool AI)
     {

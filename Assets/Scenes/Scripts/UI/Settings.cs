@@ -2,7 +2,8 @@ using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using UnityEngine;
+
+public enum RunMode { develop, build }
 
 [Serializable()]
 public class Settings
@@ -10,22 +11,23 @@ public class Settings
     [field: NonSerialized]
     private static string config_file_path = "config.bin";
     private static string server_ip = "194.87.235.152";
-    private static string local_ip = "192.168.1.5";
+    private static string local_ip = "192.168.1.7";
+
     public static int server_port = 7002;
     public static int version = 14;
-
-    public string ServerIP { get; set; }
+    public static RunMode run_mode = RunMode.develop;
+    public static string server_IP = server_ip;
     public uint Game_ID_To_Connect { get; set; }
     public bool NetworkGame { get; set; }
     public bool AIGame { get; set; }
     public string UserName { get; set; }
     public AvaibleMaterials Material { get; set; }
 
-    public Settings()
+    private Settings()
     {
-        ServerIP = server_ip;
         Game_ID_To_Connect = 0;
         NetworkGame = false;
+        AIGame = false;
         UserName = String.Empty;
         Material = AvaibleMaterials.Standard;
     }
