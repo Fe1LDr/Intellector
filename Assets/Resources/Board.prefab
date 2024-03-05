@@ -53,10 +53,7 @@ MonoBehaviour:
   - {fileID: 2059179039141518608, guid: 2ad1a09531a487648acf2b5dc0fa7f04, type: 3}
   - {fileID: 7853700468708186478, guid: 3d9adf4d7522174448dbc8075e1f729b, type: 3}
   tileSize: 2.97
-  WhiteTeamMaterial: {fileID: 2100000, guid: 9ef7b536869286748b268490b0151408, type: 2}
-  BlackTeamMaterial: {fileID: 2100000, guid: fd50e7ba1627d6f4693e3cf0b522959c, type: 2}
-  NetworkGame: 0
+  materialSelector: {fileID: 0}
   Progressor_end: {fileID: 0}
   Around_Intellector: {fileID: 0}
-  EndGameWhite: {fileID: 0}
-  EndGameBlack: {fileID: 0}
+  EndGame: {fileID: 0}
