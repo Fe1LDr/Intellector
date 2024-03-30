@@ -26,6 +26,7 @@ public class AI : MonoBehaviour
 
     private void MakeAIMove(Vector2Int start, Vector2Int end, int transform_info)
     {
+        if (main_board.game_over) return;
         MakeTree(AI_depth);
         int best_valution = AI_team ? (end_points.Min(x => x.valuation)) : (end_points.Max(x => x.valuation));
         List <TreeNode> best_nodes = end_points.FindAll(x => x.valuation == best_valution);

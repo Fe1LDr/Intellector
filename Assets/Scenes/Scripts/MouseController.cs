@@ -12,7 +12,7 @@ public class MouseController : MonoBehaviour
 
     void Update()
     {
-        if (board.game_over) return;
+        if (board.game_over || board.wait_for_transformation) return;
         if (!currentCamera)
         {
             currentCamera = Camera.main;

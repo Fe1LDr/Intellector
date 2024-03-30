@@ -32,6 +32,7 @@ public class Board : MonoBehaviour
 
     [NonSerialized] public bool Turn;
     [NonSerialized] public bool game_over;
+    [NonSerialized] public bool wait_for_transformation;
     public Piece[][] pieces;
     public GameObject[][] tiles;
 
@@ -258,7 +259,7 @@ public class Board : MonoBehaviour
         {
             Progressor_end.SetActive(true);
             StartCoroutine(WaitForPieceType(start, end));
-            game_over = true;
+            wait_for_transformation = true;
             return true;
         }
 
@@ -270,7 +271,7 @@ public class Board : MonoBehaviour
             // то можно превратиться в съеденную фигуру
             Around_Intellector.SetActive(true);
             StartCoroutine(WaitForTransformation(start, end));
-            game_over = true;
+            wait_for_transformation = true;
             return true;
         }
 
@@ -358,9 +359,9 @@ public class Board : MonoBehaviour
         TransformToEaten(start, end);
 
         Around_Intellector.GetComponent<Around_Intellector>().answer = null;
-        game_over = false;
+        wait_for_transformation = false;
     }
-
+        
     IEnumerator WaitForPieceType(Vector2Int start, Vector2Int end)
     {
         yield return new WaitUntil(() => !Progressor_end.activeInHierarchy);

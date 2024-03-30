@@ -1921,6 +1921,10 @@ MonoBehaviour:
   ErrorWindow: {fileID: 1260604389}
   DefaultColor: {r: 0.8352942, g: 0.6666667, b: 0.5019608, a: 1}
   SelectedColor: {r: 0.2688679, g: 0.45961487, b: 1, a: 0}
+  Buttons:
+  - {fileID: 365725171}
+  - {fileID: 192246216}
+  - {fileID: 1116368086}
   selected_id: 0
 --- !u!4 &745364873
 Transform:
@@ -3235,7 +3239,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 360, y: 150}
+  m_SizeDelta: {x: 380, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1275902868
 GameObject:

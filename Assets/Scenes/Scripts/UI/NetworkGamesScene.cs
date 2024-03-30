@@ -17,6 +17,7 @@ public class NetworkGamesScene : MonoBehaviour
     [SerializeField] GameObject ErrorWindow;
     [SerializeField] public Color DefaultColor;
     [SerializeField] public Color SelectedColor;
+    [SerializeField] GameObject[] Buttons;
 
     List<GameObject> Items = new List<GameObject>();
     public uint selected_id;
@@ -54,6 +55,8 @@ public class NetworkGamesScene : MonoBehaviour
         {
             Debug.LogException(e);
             ErrorWindow.SetActive(true);
+            foreach (var button in Buttons) button.SetActive(false);
+
         }
 
         bool CheckVersion(NetworkStream stream)
