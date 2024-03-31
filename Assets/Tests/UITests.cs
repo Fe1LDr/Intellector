@@ -29,7 +29,7 @@ public class UITests
         SceneManager.LoadScene("Menu");
         yield return null;
 
-        Button yourButton = GameObject.Find("Start").GetComponent<Button>();
+        Button yourButton = GameObject.Find("LocalGame").GetComponent<Button>();
         Assert.IsNotNull(yourButton, "Button not found");
         EventTrigger trigger = yourButton.gameObject.GetComponent<EventTrigger>();
         if (trigger == null)
@@ -176,7 +176,7 @@ public class UITests
 
         yield return null;
 
-        Button yourButton = GameObject.Find("Start").GetComponent<Button>();
+        Button yourButton = GameObject.Find("LocalGame").GetComponent<Button>();
 
         Assert.IsNotNull(yourButton, "Button not found");
 
