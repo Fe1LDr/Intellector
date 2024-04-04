@@ -9,7 +9,7 @@ public enum ColorChoice
 {
     white = 0,
     black = 1,
-    random = 2
+    random = 2    
 }
 
 public class ColorSelector : MonoBehaviour

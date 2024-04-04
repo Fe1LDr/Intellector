@@ -7,6 +7,7 @@ using System.Text;
 using UnityEngine.SceneManagement;
 using static Networking;
 using static LogWriter;
+using Assets.Scenes.Scripts;
 
 public class NetworkManager : MonoBehaviour
 {
@@ -34,54 +35,11 @@ public class NetworkManager : MonoBehaviour
         {
             GameInfo gameInfo = GameInfo.Load();
 
-            TcpClient client = new TcpClient(Settings.server_IP, Settings.server_port);
-            stream = client.GetStream();
 
-            WriteLog("Подключение к серверу");
-            SendString(password, stream);
-
-            byte wanted_id = Convert.ToByte(settings.Game_ID_To_Connect);
-            SendCode(wanted_id, stream);
-
-            if (wanted_id == 0)
-            {
-                SendGameInfo(gameInfo, stream);
-                WaitScreen.SetActive(true);
-
-                ServerCommunicator = new Thread(WaitForStart);
-                ServerCommunicator.Start();
-            }
-            else
-            {
-                TryConnect();
-            }
         }
     }
 
-    bool TryConnect()
-    {
-        const byte no_such_game_ans = 99;
-        const byte white_team = 0;
-        const byte black_team = 1;
 
-        byte server_ans = RecvCode(stream);
-        WriteLog($"Получено сообщение: {server_ans}");
-        if(server_ans == no_such_game_ans)
-        {
-            WriteLog($"Игра уже не существует");
-            stream.Close();
-            SceneManager.LoadScene(2);
-        }
-        if (server_ans == white_team || server_ans == black_team)
-        {
-            GameInfo gameInfo = RecvGameInfo(stream);
-            gameInfo.Save();
-            WriteLog($"Противник найден");
-            MainTasks.AddTask(() => StartGame(server_ans));
-            return true;
-        }
-        return false;
-    }
 
     public void ExecuteReceivedMove(byte[] move)
     {
@@ -155,19 +113,6 @@ public class NetworkManager : MonoBehaviour
         }
     }
 
-    void WaitForStart()
-    {
-        const byte till_waiting_ans = 1;
-        const byte cancel_waiting_ans = 0;
-
-        still_waiting = true;
-        do
-        {
-            bool connect = TryConnect();
-            if (connect) return;
-            else SendCode((still_waiting) ? till_waiting_ans : cancel_waiting_ans, stream);
-        } while (still_waiting);
-    }
 
     void StartGame(byte ans)
     {

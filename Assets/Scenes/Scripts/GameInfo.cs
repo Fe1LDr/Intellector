@@ -13,6 +13,9 @@ public class GameInfo
     public TimeContol TimeContol { get; set; }  
     public ColorChoice Color { get; set; }
 
+    public int Port {  get; set; }
+    public int JoinCode {  get; set; }
+
     [field: NonSerialized]
     public static string file_path = "game_info.bin";
 

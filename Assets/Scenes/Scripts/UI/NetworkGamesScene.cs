@@ -8,6 +8,9 @@ using System.IO;
 using System;
 using System.Text;
 using static Networking;
+using System.Net.Http;
+using Assets.Scenes.Scripts;
+
 
 public class NetworkGamesScene : MonoBehaviour
 {
@@ -19,6 +22,8 @@ public class NetworkGamesScene : MonoBehaviour
     [SerializeField] public Color SelectedColor;
     [SerializeField] GameObject[] Buttons;
 
+
+    [SerializeField] ConnectionWaiter connectionWaiter;
     List<GameObject> Items = new List<GameObject>();
     public uint selected_id;
 
@@ -27,28 +32,18 @@ public class NetworkGamesScene : MonoBehaviour
         ReadGamesFromServer();
     }
 
-    public void ReadGamesFromServer()
+    public async void ReadGamesFromServer()
     {
-        const byte games_list_request = 100;
         ClearItems();
 
         try
         {
             Settings settings = Settings.Load();
-            TcpClient server = new TcpClient(Settings.server_IP, Settings.server_port);
-            NetworkStream stream = server.GetStream();
-
-            SendString(password, stream);
-            SendCode(games_list_request, stream);
-            if (!CheckVersion(stream)) return;
-            int GameCount = RecvInt(stream);
-
-            for (int i = 0; i < GameCount; i++)
+            List<WaitingGameInfo> gameInfos = await ServerManager.GetRequest<List<WaitingGameInfo>>("WaitingGames");
+            foreach (WaitingGameInfo waitingGameInfo in gameInfos)
             {
-                GameInfo game = RecvGameInfo(stream);
-                DisplayGame(game);
+                DisplayGame(waitingGameInfo.ToGameInfo());
             }
-            server.Close();
         }
 
         catch (Exception e)
@@ -56,21 +51,6 @@ public class NetworkGamesScene : MonoBehaviour
             Debug.LogException(e);
             ErrorWindow.SetActive(true);
             foreach (var button in Buttons) button.SetActive(false);
-
-        }
-
-        bool CheckVersion(NetworkStream stream)
-        {
-            SendInt(Settings.version, stream);
-            int server_version = RecvInt(stream);
-            if (Settings.version != server_version)
-            {
-                ErrorWindow.SetActive(true);
-                ErrorWindow.GetComponentInChildren<Text>().text = $"Неподходящая версия\nВерсия сервера - {VerToStr(server_version)}\nИспользуемая версия клиента - {VerToStr(Settings.version)}\n";
-            }
-            return Settings.version == server_version;
-
-            string VerToStr(int ver) => $"{ver/10}.{ver%10}";
         }
 
         void ClearItems()
@@ -85,31 +65,35 @@ public class NetworkGamesScene : MonoBehaviour
         
     public void CreateNewGame()
     {
-        StartNetworkGame(0);
+        SetNetworkSettings(0);
+        ShowCreateGameWindow(); 
     }
 
-    public void JoinSelectedGame()
+    public async void JoinSelectedGame()
     {
         if(selected_id != 0)
-            StartNetworkGame(selected_id);
+        {
+            SetNetworkSettings(selected_id);
+            JoinInfo joinInfo = await ServerManager.GetRequest<JoinInfo>($"JoinGame/{selected_id}");
+            GameStarter.StartGame(GameInfo.Load(), joinInfo);
+        }
     }
 
-    void StartNetworkGame(uint ID)
+    private void SetNetworkSettings(uint ID)
     {
         Settings settings = Settings.Load();
         settings.NetworkGame = true;
         settings.AIGame = false;
         settings.Game_ID_To_Connect = ID;
         settings.Save();
-
-        if (ID == 0)
-        {
-            Content.SetActive(false);
-            GameInfoWindow.SetActive(true);
-        }
-            
-        else SceneManager.LoadScene(1);
     }
+
+    private void ShowCreateGameWindow()
+    {
+        Content.SetActive(false);
+        GameInfoWindow.SetActive(true);
+    }
+
 
     void DisplayGame(GameInfo game)
     {
@@ -125,13 +109,25 @@ public class NetworkGamesScene : MonoBehaviour
     }
 
     void TestFeel(uint id) => DisplayGame(new GameInfo { ID = id, Color = ColorChoice.random, Name = $"Test{id}", TimeContol = new(0,0)});
-    public void ConfirmClick()
+    public async void ConfirmClick()
     {
         GameInfo gameInfo = GameInfoWindow.GetComponent<GameInfoWindow>().GetGameInfo();
         if (gameInfo != null)
         {
             gameInfo.Save();
-            SceneManager.LoadScene(1);
+
+            bool? team = gameInfo.Color switch
+            {
+                ColorChoice.random => null,
+                ColorChoice.white => false,
+                ColorChoice.black => true,
+                _ => null,
+            };
+
+            string request = $"CreateGame?Name={gameInfo.Name}&MainTime={gameInfo.TimeContol.MaxMinutes}&AddedTime={gameInfo.TimeContol.AddedSeconds}&Color={team}";
+            await ServerManager.PostRequest(request);
+
+            connectionWaiter.StartWaiting(gameInfo);
         }
     }
 
