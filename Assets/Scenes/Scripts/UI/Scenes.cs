@@ -9,21 +9,25 @@ public class Scenes: MonoBehaviour
     {
         SceneManager.LoadScene(numberScrenes);
     }
-    public void Exit()
-    {
-        Application.Quit();
-    }
 
-    public void LocalGame() => StartGame(false, false);
-    public void AIGame() => StartGame(false, true);
-    private void StartGame(bool network, bool AI)
+    public void LocalGame()
     {
-        Settings settings = Settings.Load();
-        settings.NetworkGame = network;
-        settings.AIGame = AI;
+        var settings = Settings.Load();
+        settings.GameMode = GameMode.Local;
         settings.Save();
         ChangeScenes(1);
     }
 
-    
+    public void AIGame()
+    {
+        var settings = Settings.Load();
+        settings.GameMode = GameMode.AI;
+        settings.Save();
+        ChangeScenes(1);
+    }
+
+    public void Exit()
+    {
+        Application.Quit();
+    }
 }

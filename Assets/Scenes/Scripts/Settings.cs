@@ -3,31 +3,21 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
-public enum RunMode { develop, build }
+public enum GameMode { Local, Network, AI }
 
 [Serializable()]
 public class Settings
 {
     [field: NonSerialized]
     private static string config_file_path = "config.bin";
-    private static string server_ip = "194.87.235.152";
-    private static string local_ip = "192.168.1.7";
-
-    public static int server_port = 7002;
     public static int version = 14;
-    public static RunMode run_mode = RunMode.develop;
-    public static string server_IP = server_ip;
-    public uint Game_ID_To_Connect { get; set; }
-    public bool NetworkGame { get; set; }
-    public bool AIGame { get; set; }
+
+    public GameMode GameMode { get; set; }
     public string UserName { get; set; }
     public AvaibleMaterials Material { get; set; }
 
     private Settings()
     {
-        Game_ID_To_Connect = 0;
-        NetworkGame = false;
-        AIGame = false;
         UserName = String.Empty;
         Material = AvaibleMaterials.Standard;
     }

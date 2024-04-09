@@ -19,7 +19,7 @@ public class AI : MonoBehaviour
     private void Start()
     {
         if (!AI_team) MakeAIMove(new(), new(), 0);
-        if (Settings.Load().AIGame)
+        if (Settings.Load().GameMode == GameMode.AI)
             main_board.MoveEvent += MakeAIMove;
     }
 

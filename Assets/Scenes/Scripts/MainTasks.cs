@@ -21,20 +21,8 @@ public class MainTasks : MonoBehaviour
         catch (Exception e) { LogWriter.WriteLog(e.ToString() + e.Source + e.StackTrace); }
     }
 
-    
-    public static void ExecuteTask(Action task)
-    {
-        AddTask(task);
-        WaitTask();
-    }
-
     public static void AddTask(Action task)
     {
         tasks.Enqueue(task);
-    }
-
-    private static async void WaitTask()
-    {
-        await Task.Run(() => { while (tasks.Count > 0) { } });
     }
 }

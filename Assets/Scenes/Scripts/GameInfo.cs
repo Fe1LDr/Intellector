@@ -13,6 +13,8 @@ public class GameInfo
     public TimeContol TimeContol { get; set; }  
     public ColorChoice Color { get; set; }
 
+    public bool Team { get; set; }
+
     [field: NonSerialized]
     public static string file_path = "game_info.bin";
 

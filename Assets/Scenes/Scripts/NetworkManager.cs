@@ -13,10 +13,8 @@ public class NetworkManager : MonoBehaviour
     [SerializeField] private Board board;
     [SerializeField] private GameObject WaitScreen;
 
-    NetworkStream stream;
-    Thread ServerCommunicator;
+    NetworkStream server_stream;
 
-    bool still_waiting;
     bool ready_for_rematch = false;
 
     public event Action ExitEvent;
@@ -30,57 +28,16 @@ public class NetworkManager : MonoBehaviour
     void Start()
     {
         Settings settings = Settings.Load();
-        if (settings.NetworkGame)
+        if (settings.GameMode == GameMode.Network)
         {
-            GameInfo gameInfo = GameInfo.Load();
+            ServerConnection connection = ServerConnection.GetInstance();
+            server_stream = connection.Client.GetStream();
 
-            TcpClient client = new TcpClient(Settings.server_IP, Settings.server_port);
-            stream = client.GetStream();
-
-            WriteLog("Подключение к серверу");
-            SendString(password, stream);
-
-            byte wanted_id = Convert.ToByte(settings.Game_ID_To_Connect);
-            SendCode(wanted_id, stream);
-
-            if (wanted_id == 0)
-            {
-                SendGameInfo(gameInfo, stream);
-                WaitScreen.SetActive(true);
-
-                ServerCommunicator = new Thread(WaitForStart);
-                ServerCommunicator.Start();
-            }
-            else
-            {
-                TryConnect();
-            }
+            board.MoveEvent += MoveEventHandler;
+            Thread ServerListener = new Thread(() => ListenToServer());
+            ServerListener.Start();
+            GameStartEvent?.Invoke();
         }
-    }
-
-    bool TryConnect()
-    {
-        const byte no_such_game_ans = 99;
-        const byte white_team = 0;
-        const byte black_team = 1;
-
-        byte server_ans = RecvCode(stream);
-        WriteLog($"Получено сообщение: {server_ans}");
-        if(server_ans == no_such_game_ans)
-        {
-            WriteLog($"Игра уже не существует");
-            stream.Close();
-            SceneManager.LoadScene(2);
-        }
-        if (server_ans == white_team || server_ans == black_team)
-        {
-            GameInfo gameInfo = RecvGameInfo(stream);
-            gameInfo.Save();
-            WriteLog($"Противник найден");
-            MainTasks.AddTask(() => StartGame(server_ans));
-            return true;
-        }
-        return false;
     }
 
     public void ExecuteReceivedMove(byte[] move)
@@ -100,7 +57,7 @@ public class NetworkManager : MonoBehaviour
 
     void MoveEventHandler(Vector2Int start, Vector2Int end, int transform_info)
     {
-        SendMove(new byte[5] { (byte)start.x, (byte)start.y, (byte)end.x, (byte)end.y, (byte)transform_info }, stream);
+        SendMove(new byte[5] { (byte)start.x, (byte)start.y, (byte)end.x, (byte)end.y, (byte)transform_info }, server_stream);
         WriteLog($"Отправка хода: {start} ; {end} ; {transform_info}");
     }
 
@@ -114,16 +71,16 @@ public class NetworkManager : MonoBehaviour
         const byte rematch_code = 222;
         while (true)
         {
-            byte code = RecvCode(stream);
+            byte code = RecvCode(server_stream);
             switch (code)
             {
                 case move_code:
-                    byte[] move = RecvMove(stream);
+                    byte[] move = RecvMove(server_stream);
                     WriteLog($"Получен ход:   ({move[0]}, {move[1]}) ; ({move[2]}, {move[3]}) ; {move[4]} ");
                     MainTasks.AddTask(() => ExecuteReceivedMove(move));
                     break;
                 case time_code:
-                    int time = RecvInt(stream);
+                    int time = RecvInt(server_stream);
                     WriteLog($"осталось времени: {time}");
                     MainTasks.AddTask(() => TimeEvent?.Invoke(time));
                     break;
@@ -155,41 +112,6 @@ public class NetworkManager : MonoBehaviour
         }
     }
 
-    void WaitForStart()
-    {
-        const byte till_waiting_ans = 1;
-        const byte cancel_waiting_ans = 0;
-
-        still_waiting = true;
-        do
-        {
-            bool connect = TryConnect();
-            if (connect) return;
-            else SendCode((still_waiting) ? till_waiting_ans : cancel_waiting_ans, stream);
-        } while (still_waiting);
-    }
-
-    void StartGame(byte ans)
-    {
-        board.PlayerTeam = Convert.ToBoolean(ans);
-        WriteLog($"Назначенный цвет: {(board.PlayerTeam ? "чёрные" : "белые")}");
-
-        board.MoveEvent += MoveEventHandler;
-        Thread ServerListener = new Thread(() => ListenToServer());
-        ServerListener.Start();
-        WaitScreen.SetActive(false);
-        GameStartEvent?.Invoke();
-        return;
-    }
-
-    public void CanselWaiting()
-    {
-        still_waiting = false;
-        ServerCommunicator.Join();
-        stream.Close();
-        SceneManager.LoadScene(2);
-    }
-
     public void AskRematch()
     {
         if (board.NetworkGame)
@@ -216,16 +138,15 @@ public class NetworkManager : MonoBehaviour
             }
         }
     }
-
     public void SendExit()
     {
         const byte exit_code = 111;
-        SendCode(exit_code, stream);
-        stream.Close();
+        SendCode(exit_code, server_stream);
+        server_stream.Close();
     }
     public void SendRematch()
     {
         const byte rematch_code = 222;
-        SendCode(rematch_code, stream);
+        SendCode(rematch_code, server_stream);
     }
 }

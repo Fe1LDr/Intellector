@@ -7,7 +7,6 @@ using UnityEngine;
 
 public static class Networking 
 {
-    public const string password = "a3P1>8]Û-/é×ÿÝ975?:$qcDûÔ9&e@1a<c{a/";
     static public void SendCode(byte mes, NetworkStream stream)
     {
         byte[] send_bytes = new byte[1] { mes };
