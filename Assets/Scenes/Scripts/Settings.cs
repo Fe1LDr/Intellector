@@ -10,7 +10,7 @@ public class Settings
 {
     [field: NonSerialized]
     private static string config_file_path = "config.bin";
-    public static int version = 14;
+    public static int version = 15;
 
     public GameMode GameMode { get; set; }
     public string UserName { get; set; }

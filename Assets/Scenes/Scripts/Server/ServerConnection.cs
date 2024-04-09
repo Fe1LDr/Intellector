@@ -31,7 +31,7 @@ public class ServerConnection
 
     private static TcpClient ConnectToServer()
     {
-        TcpClient client = new TcpClient(local_ip, server_port);
+        TcpClient client = new TcpClient(server_ip, server_port);
 
         SendString(password, client.GetStream());
         CheckVersion(client.GetStream());
@@ -46,9 +46,9 @@ public class ServerConnection
         if (Settings.version != server_version)
         {
             throw new VersionException(
-             $"\"Неподходящая версия\\n" +
-             $"Версия сервера - {VerToStr(server_version)}\\n" +
-             $"Используемая версия клиента - {VerToStr(Settings.version)}\\n\""
+             $"\"Неподходящая версия\n" +
+             $"Версия сервера - {VerToStr(server_version)}\n" +
+             $"Используемая версия клиента - {VerToStr(Settings.version)}\""
              );
         }
 
