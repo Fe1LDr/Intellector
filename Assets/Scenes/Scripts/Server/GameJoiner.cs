@@ -6,20 +6,20 @@ using static Networking;
 
 public interface IGameJoiner
 {
-    public (bool, GameInfo) JoinGame(byte game_id);
+    public (bool, GameInfo) JoinGame(uint game_id);
 }
 public class GameJoiner : IGameJoiner
 {
-    public (bool, GameInfo) JoinGame(byte game_id)
+    public (bool, GameInfo) JoinGame(uint game_id)
     {
         const byte join_game_code = 30;
         const byte no_such_game_ans = 99;
 
-        TcpClient server = ServerConnection.GetInstance().Client;
+        TcpClient server = ServerConnection.GetConnection().Client;
         NetworkStream stream = server.GetStream();
 
         SendCode(join_game_code, stream);
-        SendCode(game_id, stream);
+        SendCode((byte)game_id, stream);
 
         GameInfo game_info = RecvGameInfo(stream);
 

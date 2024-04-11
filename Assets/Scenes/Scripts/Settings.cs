@@ -11,6 +11,12 @@ public class Settings
     [field: NonSerialized]
     private static string config_file_path = "config.bin";
     public static int version = 15;
+    public static IServerFactory ServerFactory { get; private set; }
+    static Settings()
+    {
+        ServerFactory = new TCPServerFactory();
+    }
+
 
     public GameMode GameMode { get; set; }
     public string UserName { get; set; }

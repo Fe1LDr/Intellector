@@ -53,6 +53,7 @@ public class Board : MonoBehaviour
 
         Settings settings = Settings.Load();
         PlayerTeam = GameInfo.Load().Team;
+        LogWriter.WriteLog($"Назначенный цвет: {PlayerTeam}");
         NetworkGame = settings.GameMode == GameMode.Network;
         (WhiteTeamMaterial, BlackTeamMaterial) = materialSelector.GetCurrentMaterials(settings.Material);
 

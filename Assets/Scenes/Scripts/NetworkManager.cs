@@ -30,7 +30,7 @@ public class NetworkManager : MonoBehaviour
         Settings settings = Settings.Load();
         if (settings.GameMode == GameMode.Network)
         {
-            ServerConnection connection = ServerConnection.GetInstance();
+            ServerConnection connection = ServerConnection.GetConnection();
             server_stream = connection.Client.GetStream();
 
             board.MoveEvent += MoveEventHandler;

@@ -4,7 +4,6 @@ using System.Net.Sockets;
 using UnityEngine;
 using static Networking;
 
-
 public class ServerConnection
 {
     public TcpClient Client { get; private set; }
@@ -23,7 +22,7 @@ public class ServerConnection
 
     public void Close() => Client.Close();
 
-    public static ServerConnection GetInstance()
+    public static ServerConnection GetConnection()
     {
         if (Instance == null || !Instance.Client.Connected) Instance = new ServerConnection(ConnectToServer());
         return Instance;
