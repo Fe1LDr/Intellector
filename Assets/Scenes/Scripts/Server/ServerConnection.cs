@@ -8,11 +8,6 @@ public class ServerConnection
 {
     public TcpClient Client { get; private set; }
 
-    public const string password = "a3P1>8]Û-/é×ÿÝ975?:$qcDûÔ9&e@1a<c{a/";
-    private static string server_ip = "194.87.235.152";
-    private static string local_ip = "192.168.1.6";
-    public static int server_port = 7002;
-
     private static ServerConnection Instance;
 
     private ServerConnection(TcpClient client)
@@ -30,9 +25,9 @@ public class ServerConnection
 
     private static TcpClient ConnectToServer()
     {
-        TcpClient client = new TcpClient(server_ip, server_port);
+        TcpClient client = new TcpClient(Settings.ServerConnection.ServerIP, Settings.ServerConnection.Port);
 
-        SendString(password, client.GetStream());
+        SendString(Settings.ServerConnection.Password, client.GetStream());
         CheckVersion(client.GetStream());
 
         return client;
