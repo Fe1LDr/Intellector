@@ -13,31 +13,35 @@ using static Networking;
 
 public interface IGameCreator
 {
-    public void WaitForStart(GameInfo gameInfo, Action onConnect);
-    public void StopWaiting();
-    public GameInfo GetGameInfo();
-    public bool IsConnected();
+    public void CreateGame(GameInfo gameInfo, Action onConnect);
+    public void CancelGameCreate();
 }
 public class GameCreator : IGameCreator
 {
-    private bool still_waiting;
+    private static bool still_waiting;
     private GameInfo gameInfo;
     private Task waiter;
     private bool connected;
 
-    public void WaitForStart(GameInfo gameInfo, Action action)
+    public async void CreateGame(GameInfo gameInfo, Action onConnect)
     {
         this.gameInfo = gameInfo;
         still_waiting = true;
         waiter = Task.Run(() => ConnectionWait());
-        waiter.GetAwaiter().OnCompleted(action);
+        await waiter;
+        if (connected)
+        {
+            onConnect();
+        }
+        else
+        {
+            ServerConnection.GetConnection().Close();
+        }
     }
 
-    public void StopWaiting()
+    public void CancelGameCreate()
     {
         still_waiting = false;
-        waiter.Wait();
-        ServerConnection.GetInstance().Close();
     }
 
     private void ConnectionWait()
@@ -48,7 +52,7 @@ public class GameCreator : IGameCreator
         const byte continue_waiting_code = 1;
         const byte stop_code = 0;
 
-        TcpClient server = ServerConnection.GetInstance().Client;
+        TcpClient server = ServerConnection.GetConnection().Client;
         NetworkStream stream = server.GetStream();
 
         SendCode(create_game_request_code, stream);
@@ -58,7 +62,7 @@ public class GameCreator : IGameCreator
             byte server_ans = RecvCode(stream);
             if (server_ans == white_team_code || server_ans == black_team_code)
             {
-                gameInfo.Team = false;
+                gameInfo.Team = server_ans == black_team_code;
                 gameInfo.Save();
                 still_waiting = false;
                 connected = true;
@@ -67,9 +71,4 @@ public class GameCreator : IGameCreator
             SendCode((still_waiting) ? continue_waiting_code : stop_code, stream);
         } while (still_waiting);         
     }
-
-    public GameInfo GetGameInfo() => gameInfo;
-
-    public bool IsConnected() => connected;
-
 }

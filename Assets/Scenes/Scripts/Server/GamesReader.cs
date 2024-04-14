@@ -15,7 +15,7 @@ public class GamesReader : IGamesReader
     {
         const byte games_list_request = 100;
 
-        TcpClient server = ServerConnection.GetInstance().Client;
+        TcpClient server = ServerConnection.GetConnection().Client;
         NetworkStream stream = server.GetStream();
 
         SendCode(games_list_request, stream);

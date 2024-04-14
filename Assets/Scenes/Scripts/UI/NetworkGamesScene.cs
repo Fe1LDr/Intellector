@@ -23,16 +23,9 @@ public class NetworkGamesScene : MonoBehaviour
     List<GameObject> Items = new List<GameObject>();
     public uint selected_id;
 
-    IGameCreator creator;
-    IGamesReader reader;
-    IGameJoiner joiner;
 
     void Start()
     {
-        reader = new GamesReader(); 
-        joiner = new GameJoiner();
-        creator = new GameCreator();
-
         ShowGamesList();
     }
 
@@ -41,7 +34,7 @@ public class NetworkGamesScene : MonoBehaviour
         ClearItems();
         try
         {
-            var games = reader.ReadGames();
+            var games = ServerManager.GetInstance().ReadGames();
             foreach(var game in games)
             {
                 DisplayGame(game);
@@ -99,7 +92,7 @@ public class NetworkGamesScene : MonoBehaviour
     {
         if(selected_id != 0)
         {
-            (bool connect, GameInfo gameInfo) = joiner.JoinGame((byte)selected_id);
+            (bool connect, GameInfo gameInfo) = ServerManager.GetInstance().JoinGame(selected_id);
             if (!connect)
             {
                 ErrorWindow.SetActive(true);
@@ -116,15 +109,12 @@ public class NetworkGamesScene : MonoBehaviour
         if (gameInfo != null)
         {
             WaitingWindow.SetActive(true);
-            creator.WaitForStart(gameInfo,
-                () => { 
-                    if (creator.IsConnected()) GoToGameScene(); 
-                });
+            ServerManager.GetInstance().CreateGame(gameInfo,GoToGameScene);
         }
     }
     public void CancelWaiting()
     {
-        creator.StopWaiting();
+        ServerManager.GetInstance().CancelGameCreate();
         WaitingWindow.SetActive(false);
     }
 
