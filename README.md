@@ -1,8 +1,8 @@
 # Intellector
 ### Приложение для игры в интеллектор в 3D
-### Скачать последнюю версию приложения: https://disk.yandex.ru/d/frMHXL2e8AhsQA
-### Официальный сайт игры: https://intellector.info/
-### Правила игры: https://intellector.info/rules
+### [Скачать последнюю версию приложения](https://disk.yandex.ru/d/nSNS6edgjDhGvA)
+### [Официальный сайт игры](https://intellector.info/)
+### [Правила игры](https://intellector.info/rules)
 
 ## Функциональные возможности:
 ### Локальная игра:
