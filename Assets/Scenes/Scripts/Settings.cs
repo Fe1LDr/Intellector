@@ -20,7 +20,7 @@ public class Settings
     [field: NonSerialized]
     private static string config_file_path = "config.bin";
     private static string server_connection_file_path = "connection.json";
-    public static int version = 15;
+    public static int version = 16;
     public static IServerFactory ServerFactory { get; private set; }
     public static ServerConnectionSettings ServerConnection { get; private set; }
     static Settings()

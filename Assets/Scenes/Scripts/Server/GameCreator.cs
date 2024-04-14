@@ -62,7 +62,7 @@ public class GameCreator : IGameCreator
             byte server_ans = RecvCode(stream);
             if (server_ans == white_team_code || server_ans == black_team_code)
             {
-                gameInfo.Team = false;
+                gameInfo.Team = server_ans == black_team_code;
                 gameInfo.Save();
                 still_waiting = false;
                 connected = true;
