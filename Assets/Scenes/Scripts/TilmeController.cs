@@ -1,8 +1,9 @@
+using Assets.Scenes.Scripts.Server;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TimeController : MonoBehaviour
+public class TimeController : MonoBehaviour, IServerListenerTimeObserver
 {
     [SerializeField] private NetworkManager network_manager;
     [SerializeField] private TimeControlView view;
@@ -39,14 +40,24 @@ public class TimeController : MonoBehaviour
     {
         if (Settings.Load().GameMode == GameMode.Network)
         {
-            network_manager.TimeEvent += TimeReceived;
-            network_manager.GameStartEvent += StartGame;
-            board.RestartEvent += StartGame;
-            board.EndGameEvent += EndGame;
+            ServerManager.GetInstance().RegisterObserver(this);
+
+            network_manager.GameStartEvent += _Start;
+            board.RestartEvent += _Start;
+            board.EndGameEvent += Stop;
         }
     }
 
-    public void StartGame()
+    public void OnTimeReceived(int time)
+    {
+        if (turn) BlackTime = time;
+        else WhiteTime = time;
+        turn = !turn;
+        if (turn) view.DisplayBlackTurn();
+        else view.DisplayWhiteTurn();
+    }
+
+    public void _Start()
     {
         GameInfo gameInfo = GameInfo.Load();
         time_control = gameInfo.TimeContol;
@@ -61,18 +72,9 @@ public class TimeController : MonoBehaviour
         view.StartRunTime();
     }
 
-    public void EndGame()
+    public void Stop()
     {
         if (active)
             view.Stop();
-    }
-
-    private void TimeReceived(int time)
-    {
-        if (turn) BlackTime = time;
-        else WhiteTime = time;
-        turn = !turn;
-        if (turn) view.DisplayBlackTurn();
-        else view.DisplayWhiteTurn();
     }
 }

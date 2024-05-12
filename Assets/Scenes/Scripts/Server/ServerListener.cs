@@ -9,17 +9,20 @@ using static Networking;
 
 namespace Assets.Scenes.Scripts.Server
 {
-    public class ServerListener : IServerListener
+    public class ServerListener : IServerListener, IServerListenerObservable
     {  
-        private List<IServerListenerObserver> observers = new List<IServerListenerObserver>();
-        public void RegisterObserver(IServerListenerObserver observer)
-        {
-            observers.Add(observer);
-        }
-        public void UnregisterObserver(IServerListenerObserver observer)
-        {
-            observers.Remove(observer);
-        }
+        private List<IServerListenerMoveObserver> moveObservers = new();
+        private List<IServerListenerTimeObserver> timeObservers = new();
+        private List<IServerListenerExitObserver> exitObservers = new();
+        private List<IServerListenerRematchObserver> rematchObservers = new();
+        private List<IServerListenerTimeOutObserver> timeOutObservers = new();
+
+        public void RegisterObserver(IServerListenerMoveObserver observer) => moveObservers.Add(observer);
+        public void RegisterObserver(IServerListenerTimeObserver observer) => timeObservers.Add(observer);
+        public void RegisterObserver(IServerListenerExitObserver observer) => exitObservers.Add(observer);
+        public void RegisterObserver(IServerListenerRematchObserver observer) => rematchObservers.Add(observer);
+        public void RegisterObserver(IServerListenerTimeOutObserver observer) => timeOutObservers.Add(observer);
+
 
         public void ListenServer()
         {
@@ -64,23 +67,23 @@ namespace Assets.Scenes.Scripts.Server
         }
         public void ExitReceived()
         {
-            foreach(var observer in observers) observer.OnExitReceived();
+            foreach(var observer in exitObservers) observer.OnExitReceived();
         }
         public void MoveReceived(Vector2Int start, Vector2Int end, int transform_info)
         {
-            foreach (var observer in observers) observer.OnMoveReceived(start, end, transform_info);
+            foreach (var observer in moveObservers) observer.OnMoveReceived(start, end, transform_info);
         }
         public void RematchReceived()
         {
-            foreach (var observer in observers) observer.OnRematchReceived();
+            foreach (var observer in rematchObservers) observer.OnRematchReceived();
         }
-        public void TimeOutReceived(bool exit_team)
+        public void TimeOutReceived(bool team)
         {
-            foreach (var observer in observers) observer.OnTimeOutReceived(exit_team);
+            foreach (var observer in timeOutObservers) observer.OnTimeOutReceived(team);
         }
         public void TimeReceived(int time)
         {
-            foreach (var observer in observers) observer.OnTimeReceived(time);
+            foreach (var observer in timeObservers) observer.OnTimeReceived(time);
         }
     }
 }

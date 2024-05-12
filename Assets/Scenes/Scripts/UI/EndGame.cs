@@ -1,9 +1,10 @@
+using Assets.Scenes.Scripts.Server;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EndGame : MonoBehaviour
+public class EndGame : MonoBehaviour, IServerListenerExitObserver, IServerListenerRematchObserver
 {
     [SerializeField] GameObject EndGameWindow;
     [SerializeField] GameObject Rematch;
@@ -16,8 +17,14 @@ public class EndGame : MonoBehaviour
         Text[] text = EndGameWindow.GetComponentsInChildren<Text>();
         low_text = text[0];
         top_text = text[1];
-        networkManager.ExitEvent += () => RematchSetActive(false); 
-        networkManager.RematchEvent += () => DisplayRematchRequest(); 
+    }
+    public void OnExitReceived()
+    {
+        RematchSetActive(false);
+    }
+    public void OnRematchReceived()
+    {
+        DisplayRematchRequest();
     }
 
     public void DisplayResult(bool network, bool winner, bool team, bool by_exit)

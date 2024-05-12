@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Net.Sockets;
-using UnityEngine;
 using static Networking;
 
 public class ServerConnection

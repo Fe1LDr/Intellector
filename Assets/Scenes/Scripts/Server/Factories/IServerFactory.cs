@@ -10,4 +10,5 @@ public interface IServerFactory
     public IGamesReader MakeGamesReader();
     public INetworkGameManager MakeNetworkGameManager();
     public IServerListener MakeServerListener();
+    public IServerListenerObservable MakeServerObservable();
 }

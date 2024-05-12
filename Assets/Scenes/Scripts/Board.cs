@@ -1,10 +1,11 @@
+using Assets.Scenes.Scripts.Server;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Board : MonoBehaviour
+public class Board : MonoBehaviour, IServerListenerMoveObserver
 {
     [Header("Prefabs")]
     [SerializeField] private GameObject tilePrefab;
@@ -402,4 +403,8 @@ public class Board : MonoBehaviour
         EndGame.DisplayResult(NetworkGame, winner, PlayerTeam, ByExit);
         EndGameEvent?.Invoke();
     }
+
+    //сетевая игра
+    public void OnMoveReceived(Vector2Int start, Vector2Int end, int transform_info) => MovePiece(start, end, true, transform_info);
+
 }

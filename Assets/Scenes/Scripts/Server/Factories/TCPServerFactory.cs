@@ -29,4 +29,8 @@ public class TCPServerFactory : IServerFactory
     {
         return new ServerListener();
     }
+    public IServerListenerObservable MakeServerObservable()
+    {
+        return new ServerListener();
+    }
 }

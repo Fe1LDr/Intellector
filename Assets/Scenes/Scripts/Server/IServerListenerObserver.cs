@@ -7,12 +7,28 @@ using UnityEngine;
 
 namespace Assets.Scenes.Scripts.Server
 {
-    public interface IServerListenerObserver
+    public interface IServerListenerMoveObserver
     {
         public void OnMoveReceived(Vector2Int start, Vector2Int end, int transform_info);
+    }
+
+    public interface IServerListenerTimeObserver
+    {
         public void OnTimeReceived(int time);
+    }
+
+    public interface IServerListenerExitObserver
+    {
         public void OnExitReceived();
+    }
+
+    public interface IServerListenerRematchObserver
+    {
         public void OnRematchReceived();
-        public void OnTimeOutReceived(bool exit_team);
+    }
+
+    public interface IServerListenerTimeOutObserver
+    {
+        public void OnTimeOutReceived(bool team);
     }
 }

@@ -13,6 +13,7 @@ public class ServerManager
     private IGameCreator gameCreator;
     private INetworkGameManager networkManager;
     private IServerListener serverListener;
+    private IServerListenerObservable serverObservable;
 
     private static ServerManager instance;
 
@@ -23,6 +24,7 @@ public class ServerManager
         gamesReader = Settings.ServerFactory.MakeGamesReader();
         networkManager = Settings.ServerFactory.MakeNetworkGameManager();
         serverListener = Settings.ServerFactory.MakeServerListener();   
+        serverObservable = Settings.ServerFactory.MakeServerObservable();
     }
     public static ServerManager GetInstance() 
     { 
@@ -38,8 +40,18 @@ public class ServerManager
     public void SendMove(Vector2Int start, Vector2Int end, int transform_info) => networkManager.SendMove(start, end, transform_info);
     public void SendRematch() => networkManager.SendRematch();
     public void SendExit() => networkManager.SendExit();
-    public void RegisterObserver(IServerListenerObserver observer) => serverListener.RegisterObserver(observer);
-    public void UnregisterObserver(IServerListenerObserver observer) => serverListener.UnregisterObserver(observer);
+    public void RegisterObserver(object observer)
+    {
+        switch (observer)
+        {
+            case IServerListenerMoveObserver moveObserver: serverObservable.RegisterObserver(moveObserver); break;
+            case IServerListenerTimeObserver timeObserver: serverObservable.RegisterObserver(timeObserver); break;
+            case IServerListenerTimeOutObserver timeOutObserver: serverObservable.RegisterObserver(timeOutObserver); break;
+            case IServerListenerRematchObserver rematchObserver: serverObservable.RegisterObserver(rematchObserver); break;
+            case IServerListenerExitObserver exitObserver: serverObservable.RegisterObserver(exitObserver); break;
+        }
+    }
+
     public void ListenServer() => serverListener.ListenServer();    
 
 }

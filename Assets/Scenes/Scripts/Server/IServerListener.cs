@@ -7,10 +7,16 @@ using UnityEngine;
 
 namespace Assets.Scenes.Scripts.Server
 {
+    public interface IServerListenerObservable
+    {
+        public void RegisterObserver(IServerListenerMoveObserver observer);
+        public void RegisterObserver(IServerListenerTimeObserver observer);
+        public void RegisterObserver(IServerListenerExitObserver observer);
+        public void RegisterObserver(IServerListenerRematchObserver observer);
+        public void RegisterObserver(IServerListenerTimeOutObserver observer);
+    }
     public interface IServerListener
     {
-        public void RegisterObserver(IServerListenerObserver observer);
-        public void UnregisterObserver(IServerListenerObserver observer);
         public void ListenServer();
         public void MoveReceived(Vector2Int start, Vector2Int end, int transform_info);
         public void TimeReceived(int time);
