@@ -18,17 +18,21 @@ public class ServerConnectionSettings
 public class Settings
 {
     [field: NonSerialized]
-    private static string config_file_path = "config.bin";
-    private static string server_connection_file_path = "connection.json";
     public static int version = 16;
     public static IServerFactory ServerFactory { get; private set; }
     public static ServerConnectionSettings ServerConnection { get; private set; }
     static Settings()
     {
         ServerFactory = new TCPServerFactory();
-        ServerConnection = JsonUtility.FromJson<ServerConnectionSettings>(File.ReadAllText(server_connection_file_path));
+        ServerConnection = new ServerConnectionSettings()
+        {
+            Password = "kW2é@#daöêéw;!oAW}3Dô<âP)Idöê4awd345Aââas*da$F?dsfgÓÊ÷ô6a>Wxa{",
+            Port = 7003,
+            ServerIP = "194.87.235.152"
+        };
     }
 
+    static Settings _instance = new Settings();
     public GameMode GameMode { get; set; }
     public string UserName { get; set; }
     public AvaibleMaterials Material { get; set; }
@@ -40,27 +44,12 @@ public class Settings
     }
     public void Save()
     {
-        using (FileStream stream = new FileStream(config_file_path, FileMode.OpenOrCreate))
-        {
-            var binaryFormatter = new BinaryFormatter();
-            binaryFormatter.Serialize(stream, this);
-        }
+        _instance = this;
     }
 
     public static Settings Load()
     {
-        if (File.Exists(config_file_path))
-        {
-            var binaryFormatter = new BinaryFormatter();
-            using (FileStream stream = new FileStream(config_file_path, FileMode.Open))
-            {
-                return (Settings)binaryFormatter.Deserialize(stream);
-            }
-        }
-        else
-        {
-            return new Settings();
-        }
+        return _instance;       
     }
     static public bool CheckName(string name, out string error_message)
     {
