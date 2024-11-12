@@ -371,7 +371,7 @@ public class Board : MonoBehaviour
         ProgressorTransformation(start, end);
 
         Progressor_end.GetComponent<Progressor_end>().answer = null;
-        game_over = false;
+        wait_for_transformation = false;
     }
 
     void ProgressorTransformation(Vector2Int start, Vector2Int end)
