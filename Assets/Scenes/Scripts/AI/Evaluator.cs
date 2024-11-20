@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class Evaluator
 {
@@ -93,7 +91,4 @@ public class Evaluator
         if (piece.type == PieceType.intellector) return (piece.team == false) ? 1000 : -10000;
         return (piece.team == false) ? PieceValues[piece.type] + GetPositionValue(piece) : -PieceValues[piece.type] - GetPositionValue(piece);
     }
-
-
-
 }

@@ -1,6 +1,5 @@
 using Assets.Scenes.Scripts.Server;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,11 +7,11 @@ public class ServerManager
 {
     public ServerConnection Connection { get => ServerConnection.GetConnection(); }
 
-    private IGamesReader gamesReader;
-    private IGameJoiner gameJoiner;
-    private IGameCreator gameCreator;
-    private INetworkGameManager networkManager;
-    private IServerListener serverListener;
+    private readonly IGamesReader gamesReader;
+    private readonly IGameJoiner gameJoiner;
+    private readonly IGameCreator gameCreator;
+    private readonly INetworkGameManager networkManager;
+    private readonly IServerListener serverListener;
 
     private static ServerManager instance;
 
@@ -41,5 +40,4 @@ public class ServerManager
     public void RegisterObserver(IServerListenerObserver observer) => serverListener.RegisterObserver(observer);
     public void UnregisterObserver(IServerListenerObserver observer) => serverListener.UnregisterObserver(observer);
     public void ListenServer() => serverListener.ListenServer();    
-
 }

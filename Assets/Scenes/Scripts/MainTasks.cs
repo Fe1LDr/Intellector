@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 
 public class MainTasks : MonoBehaviour
@@ -18,7 +16,10 @@ public class MainTasks : MonoBehaviour
                 task();
             }
         }
-        catch (Exception e) { LogWriter.WriteLog(e.ToString() + e.Source + e.StackTrace); }
+        catch (Exception e) 
+        { 
+            LogWriter.WriteLog(e.ToString()); 
+        }
     }
 
     public static void AddTask(Action task)

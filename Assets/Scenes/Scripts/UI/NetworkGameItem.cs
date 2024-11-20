@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -34,7 +32,7 @@ public class NetworkGameItem : MonoBehaviour
 
     private void SetSelectedNumber()
     {
-        NetworkGameScene.selected_id = GameInfo.ID;
+        NetworkGameScene.SelectedId = GameInfo.ID;
         NetworkGameScene.SetDefaultColors();
         SetSelectedColor();
     }

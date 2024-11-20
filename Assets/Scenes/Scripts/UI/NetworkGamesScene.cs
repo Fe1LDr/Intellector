@@ -1,12 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using System.Net.Sockets;
-using System.IO;
 using System;
-using System.Text;
 
 public class NetworkGamesScene : MonoBehaviour
 {
@@ -18,11 +14,9 @@ public class NetworkGamesScene : MonoBehaviour
     [SerializeField] public Color DefaultColor;
     [SerializeField] public Color SelectedColor;
     [SerializeField] GameObject[] Buttons;
-
     
-    List<GameObject> Items = new List<GameObject>();
-    public uint selected_id;
-
+    private readonly List<GameObject> Items = new List<GameObject>();
+    public uint SelectedId;
 
     void Start()
     {
@@ -55,7 +49,8 @@ public class NetworkGamesScene : MonoBehaviour
 
         void DeactivateButtons() { foreach (var button in Buttons) button.SetActive(false); }
     }
-    void DisplayGame(GameInfo game)
+
+    private void DisplayGame(GameInfo game)
     {
         GameObject net_game_obj = Instantiate(NetworkGamePrefab);
         NetworkGameItem net_game = net_game_obj.GetComponent<NetworkGameItem>();
@@ -67,6 +62,7 @@ public class NetworkGamesScene : MonoBehaviour
         net_game.SetDefaultColor();
         Items.Add(net_game_obj);
     }
+
     private void ClearItems()
     {
         foreach (GameObject item in Items)
@@ -75,10 +71,12 @@ public class NetworkGamesScene : MonoBehaviour
         }
         Items.Clear();
     }
+
     public void ShowGameInfoWindow()
     {
         GameInfoWindow.SetActive(true);
     }
+
     public void SetDefaultColors()
     {
         foreach (GameObject game_obj in Items)
@@ -87,12 +85,11 @@ public class NetworkGamesScene : MonoBehaviour
         }
     }
 
-
     public void JoinSelectedGame()
     {
-        if(selected_id != 0)
+        if(SelectedId != 0)
         {
-            (bool connect, GameInfo gameInfo) = ServerManager.GetInstance().JoinGame(selected_id);
+            (bool connect, GameInfo gameInfo) = ServerManager.GetInstance().JoinGame(SelectedId);
             if (!connect)
             {
                 ErrorWindow.SetActive(true);
@@ -112,13 +109,12 @@ public class NetworkGamesScene : MonoBehaviour
             ServerManager.GetInstance().CreateGame(gameInfo,GoToGameScene);
         }
     }
+
     public void CancelWaiting()
     {
         ServerManager.GetInstance().CancelGameCreate();
         WaitingWindow.SetActive(false);
     }
-
-
 
     private void GoToGameScene()
     {
