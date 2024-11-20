@@ -35,12 +35,12 @@ public class Settings
     static Settings _instance = new Settings();
     public GameMode GameMode { get; set; }
     public string UserName { get; set; }
-    public AvaibleMaterials Material { get; set; }
+    public PieceMaterials Material { get; set; }
 
     private Settings()
     {
         UserName = String.Empty;
-        Material = AvaibleMaterials.Standard;
+        Material = PieceMaterials.Standard;
     }
     public void Save()
     {

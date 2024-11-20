@@ -12,13 +12,13 @@ public class SettingsScene : MonoBehaviour
     [SerializeField] private InputField NameInput;
     [SerializeField] private Text ErrorText;
     [SerializeField] private Text MaterialName;
-
-    
+        
     void Start()
     {
         ShowCurrentSettings();
     }
-    void ShowCurrentSettings()
+
+    private void ShowCurrentSettings()
     {
         settings = Settings.Load();
         NameInput.text = settings.UserName;
@@ -26,6 +26,7 @@ public class SettingsScene : MonoBehaviour
     }
 
     public void InputChanged() => CheckName();
+
     private bool CheckName()
     {
         string error_mes;
@@ -33,6 +34,7 @@ public class SettingsScene : MonoBehaviour
         ErrorText.text = error_mes;
         return valid;
     }
+
     public void SaveButtonClick()
     {
         if (CheckName())
@@ -42,20 +44,23 @@ public class SettingsScene : MonoBehaviour
             Exit();
         }
     }
+
     public void CanselButtonClick()
     {
         ShowCurrentSettings();
         ErrorText.text = String.Empty;
     }
+
     public void SwitchMaterial(int direction)
     {
         int new_materials_number = ((int)settings.Material + direction);
-        int max_number = Enum.GetNames(typeof(AvaibleMaterials)).Length;
+        int max_number = Enum.GetNames(typeof(PieceMaterials)).Length;
         if (new_materials_number >= max_number) new_materials_number = 0;
         if (new_materials_number < 0) new_materials_number = max_number - 1;
-        settings.Material = (AvaibleMaterials)(new_materials_number);
+        settings.Material = (PieceMaterials)(new_materials_number);
         MaterialName.text = MaterialSelector.MaterialName(settings.Material);
     }
+
     public void Exit()
     {
         SceneManager.LoadScene(0);

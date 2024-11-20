@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
-using UnityEngine;
 using static Networking;
 
 public interface IGamesReader

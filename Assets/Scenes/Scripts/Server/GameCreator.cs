@@ -1,13 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using System.Net.Sockets;
-using System.Runtime.InteropServices.ComTypes;
-using System.Threading;
 using System.Threading.Tasks;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 using static Networking;
 
 
@@ -16,6 +9,7 @@ public interface IGameCreator
     public void CreateGame(GameInfo gameInfo, Action onConnect);
     public void CancelGameCreate();
 }
+
 public class GameCreator : IGameCreator
 {
     private static bool still_waiting;

@@ -1,13 +1,9 @@
 using Cinemachine;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraMove : MonoBehaviour
 {
-    private static string[] layers_names = { "Tile", "HoverTile", "SelectedTile", "Avaible", "HoverAvaible" };
-    // Start is called before the first frame update
-    CinemachineFreeLook currentCamera;
+    private CinemachineFreeLook currentCamera;
 
     void Update()
     {
@@ -28,5 +24,10 @@ public class CameraMove : MonoBehaviour
             currentCamera.m_YAxis.m_MaxSpeed = 0;
             currentCamera.m_XAxis.m_MaxSpeed = 0;
         }
+    }
+
+    void Awake()
+    {
+        currentCamera.m_XAxis.m_InputAxisValue = 180;
     }
 }

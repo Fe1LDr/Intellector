@@ -1,14 +1,13 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class VirtualBoard
 {
-    VirtualPiece[][] pieces;
-    public int valuation;
-    bool turn;
+    private bool turn;
+
+    private readonly VirtualPiece[][] pieces;
+
+    public int Valuation {  get; private set; }
 
     public VirtualBoard(Piece[][] board, int valuation)
     {
@@ -22,7 +21,7 @@ public class VirtualBoard
             }
         }
 
-        this.valuation = valuation;
+        Valuation = valuation;
         turn = AI.AI_team;
     }
 
@@ -30,8 +29,10 @@ public class VirtualBoard
     {
         VirtualPiece start_piece = pieces[move.start_x][move.start_y];
         VirtualPiece end_piece = pieces[move.end_x][move.end_y];
+
         if (start_piece == null)
             throw new System.NullReferenceException("Õ¿◊¿À‹Õ¿ﬂ ‘»√”–¿ NULL");
+
         DecreaseValuation(move);
 
         //ÓÍËÓ‚Í‡
@@ -119,20 +120,19 @@ public class VirtualBoard
         {
             pieces[move.end_x][move.end_y].x = move.end_x; 
             pieces[move.end_x][move.end_y].y = move.end_y;
-        }
-        
+        }       
     }
 
     private void DecreaseValuation(Move move)
     {
-        valuation -= Evaluator.GetValue(pieces[move.start_x][move.start_y]);
-        valuation -= Evaluator.GetValue(pieces[move.end_x][move.end_y]);
+        Valuation -= Evaluator.GetValue(pieces[move.start_x][move.start_y]);
+        Valuation -= Evaluator.GetValue(pieces[move.end_x][move.end_y]);
     }
 
     private void IncreaseValuation(Move move)
     {
-        valuation += Evaluator.GetValue(pieces[move.start_x][move.start_y]);
-        valuation += Evaluator.GetValue(pieces[move.end_x][move.end_y]);
+        Valuation += Evaluator.GetValue(pieces[move.start_x][move.start_y]);
+        Valuation += Evaluator.GetValue(pieces[move.end_x][move.end_y]);
     }
 
     private VirtualPiece MakePiece(PieceType type)

@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
@@ -76,27 +74,29 @@ public class TimeControlView : MonoBehaviour
         opponent_time = time;
         MainTasks.AddTask(() => { if (OpponentTime != null) OpponentTime.text = TimeToString(time); });
     }
+
     private void DisplayMyTime(int time)
     {
         my_time = time;
         MainTasks.AddTask(() => { if (MyTime != null) MyTime.text = TimeToString(time); });
     } 
+
     private void DisplayOpponentTurn()
     {
         turn = false;
         
         OpponentPanel.SetActive(true);
-        MyPanel.SetActive(false);
-        
+        MyPanel.SetActive(false);   
     }
+
     private void DisplayMyTurn()
     {
         turn = true;
         
         MyPanel.SetActive(true);
-        OpponentPanel.SetActive(false);
-        
+        OpponentPanel.SetActive(false);        
     }
+
     private string TimeToString(int milliseconds)
     {
         int total_seconds = milliseconds / 1000;
@@ -104,6 +104,7 @@ public class TimeControlView : MonoBehaviour
         int seconds = total_seconds % 60;
         return $"{minutes:D2}:{seconds:D2}";
     }
+
     private void ShowRunningTime(DisplayTime display_time, ref int time, bool needed_turn)
     {
         const int sleep_time = 100;

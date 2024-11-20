@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 using static Networking;
-using static Board;
 
 namespace Assets.Scenes.Scripts.Server
 {
     public interface INetworkGameManager
     {
-        
         public void SendMove(Vector2Int start, Vector2Int end, int transform_info);
         public void SendExit();
         public void SendRematch();

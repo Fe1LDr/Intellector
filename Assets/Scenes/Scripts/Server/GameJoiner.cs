@@ -1,13 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Net.Sockets;
-using UnityEngine;
 using static Networking;
 
 public interface IGameJoiner
 {
     public (bool, GameInfo) JoinGame(uint game_id);
 }
+
 public class GameJoiner : IGameJoiner
 {
     public (bool, GameInfo) JoinGame(uint game_id)

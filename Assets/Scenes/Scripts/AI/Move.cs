@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -57,16 +56,14 @@ public class Move
 
     private Move(Move standard, PieceType taken_type)
     {
-        this.start_x = standard.start_x;
-        this.start_y = standard.start_y;
-        this.start_type = standard.start_type;
-        this.end_x = standard.end_x;
-        this.end_y = standard.end_y;
-        this.end_type = taken_type;
-        this.castling = standard.castling;
-        this.taking = standard.taking;
-        this.previous_piece = standard.previous_piece;
+        start_x = standard.start_x;
+        start_y = standard.start_y;
+        start_type = standard.start_type;
+        end_x = standard.end_x;
+        end_y = standard.end_y;
+        end_type = taken_type;
+        castling = standard.castling;
+        taking = standard.taking;
+        previous_piece = standard.previous_piece;
     }
-
-    public bool IsQuitMove() => !taking;
 }

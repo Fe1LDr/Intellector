@@ -1,8 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 [Serializable()]
 public enum ColorChoice
@@ -24,6 +21,7 @@ public class ColorSelector : MonoBehaviour
     {
         RandomClick();
     }
+
     public void WhiteClick()
     {
         Color = ColorChoice.white;   

@@ -1,6 +1,4 @@
 using System.Linq;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -90,7 +88,7 @@ public class AI : MonoBehaviour
         foreach (Move move in moves)
         {
             virtual_board.MakeMove(move);
-            node.unviewed_children.Add(new TreeNode(move, virtual_board.valuation, node));
+            node.unviewed_children.Add(new TreeNode(move, virtual_board.Valuation, node));
             virtual_board.CancelMove(move);
         }
     }
