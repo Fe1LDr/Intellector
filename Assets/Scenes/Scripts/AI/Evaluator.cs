@@ -75,20 +75,20 @@ public class Evaluator
         new int [] {8,6,4,3,2,1,0,0,0 },
 };
 
-    private static int GetPositionValue(VirtualPiece piece)
+    private static int GetPositionValue(IPiece piece)
     {
-        switch (piece.type)
+        switch (piece.Type)
         {
-            case PieceType.intellector: return piece.team ? black_intellector_positions[piece.x][piece.y] : white_intellector_positions[piece.x][piece.y];
-            case PieceType.progressor: return piece.team? black_progressor_positions[piece.x][piece.y] : white_progressor_positions[piece.x][piece .y];
-            default: return default_positions[piece.x][piece.y];
+            case PieceType.intellector: return piece.Team ? black_intellector_positions[piece.X][piece.Y] : white_intellector_positions[piece.X][piece.Y];
+            case PieceType.progressor: return piece.Team? black_progressor_positions[piece.X][piece.Y] : white_progressor_positions[piece.X][piece .Y];
+            default: return default_positions[piece.X][piece.Y];
         }
     }
 
-    public static int GetValue(VirtualPiece piece)
+    public static int GetValue(IPiece piece)
     {
         if (piece == null) return 0;
-        if (piece.type == PieceType.intellector) return (piece.team == false) ? 1000 : -10000;
-        return (piece.team == false) ? PieceValues[piece.type] + GetPositionValue(piece) : -PieceValues[piece.type] - GetPositionValue(piece);
+        if (piece.Type == PieceType.intellector) return (piece.Team == false) ? 1000 : -10000;
+        return (piece.Team == false) ? PieceValues[piece.Type] + GetPositionValue(piece) : -PieceValues[piece.Type] - GetPositionValue(piece);
     }
 }

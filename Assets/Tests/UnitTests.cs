@@ -80,7 +80,7 @@ public class UnitTests {
         board.SelectTile(new Vector2Int(3, 0));
         yield return new WaitForSeconds(0.1f);
 
-        PieceType result = board.pieces[3][0].type;
+        PieceType result = board.pieces[3][0].Type;
         Assert.AreEqual(result, PieceType.intellector);
     }
 
@@ -95,10 +95,10 @@ public class UnitTests {
         board.SelectTile(new Vector2Int(1, 2));
         yield return new WaitForSeconds(0.1f);
 
-        PieceType result = board.pieces[1][2].type;
+        PieceType result = board.pieces[1][2].Type;
         Assert.AreEqual(result, PieceType.liberator);
-        Assert.AreEqual(liberator.x, 1);
-        Assert.AreEqual(liberator.y, 2);
+        Assert.AreEqual(liberator.X, 1);
+        Assert.AreEqual(liberator.Y, 2);
     }
 
     [UnityTest]
@@ -112,10 +112,10 @@ public class UnitTests {
         board.SelectTile(new Vector2Int(3, 1));
         yield return new WaitForSeconds(0.1f);
 
-        PieceType result = board.pieces[3][1].type;
+        PieceType result = board.pieces[3][1].Type;
         Assert.AreEqual(result, PieceType.agressor);
-        Assert.AreEqual(agressor.x, 3);
-        Assert.AreEqual(agressor.y, 1);
+        Assert.AreEqual(agressor.X, 3);
+        Assert.AreEqual(agressor.Y, 1);
     }
 
 
@@ -131,8 +131,8 @@ public class UnitTests {
         board.SelectTile(new Vector2Int(2, 5));
         yield return new WaitForSeconds(0.1f);
 
-        Assert.AreEqual(liberator.x, 1);
-        Assert.AreEqual(liberator.y, 0);
+        Assert.AreEqual(liberator.X, 1);
+        Assert.AreEqual(liberator.Y, 0);
     }
 
     [UnityTest]
@@ -200,13 +200,13 @@ public class UnitTests {
         board = gameGameObject.GetComponent<Board>();
 
         yield return null;
-        Piece piece = board.GenerateSinglePiece(PieceType.dominator, false, 8, 0);
+        IPiece piece = board.GenerateSinglePiece(PieceType.dominator, false, 8, 0);
         yield return null;
 
-        PieceType result = piece.type;
+        PieceType result = piece.Type;
         Assert.AreEqual(result, PieceType.dominator);
-        Assert.AreEqual(piece.x, 8);
-        Assert.AreEqual(piece.y, 0);
+        Assert.AreEqual(piece.X, 8);
+        Assert.AreEqual(piece.Y, 0);
     }
 
     [UnityTest]
@@ -215,10 +215,10 @@ public class UnitTests {
         GameObject gameGameObject = MonoBehaviour.Instantiate(Resources.Load<GameObject>("Board"));
         board = gameGameObject.GetComponent<Board>();
         yield return null;
-        Piece piece = board.GenerateSinglePiece(PieceType.intellector, false, 1000, -1000);
+        IPiece piece = board.GenerateSinglePiece(PieceType.intellector, false, 1000, -1000);
         yield return null;
 
-        PieceType result = piece.type;
+        PieceType result = piece.Type;
         Assert.AreEqual(result, PieceType.intellector);
     }
 }

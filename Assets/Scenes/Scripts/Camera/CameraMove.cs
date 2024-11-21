@@ -3,31 +3,32 @@ using UnityEngine;
 
 public class CameraMove : MonoBehaviour
 {
-    private CinemachineFreeLook currentCamera;
+    [SerializeField]
+    private CinemachineFreeLook _currentCamera;
 
     void Update()
     {
-        if (!currentCamera)
+        if (!_currentCamera)
         {
-            currentCamera = GetComponent<CinemachineFreeLook>();
-            currentCamera.m_YAxis.m_MaxSpeed = 0;
-            currentCamera.m_XAxis.m_MaxSpeed = 0;
+            _currentCamera = GetComponent<CinemachineFreeLook>();
+            _currentCamera.m_YAxis.m_MaxSpeed = 0;
+            _currentCamera.m_XAxis.m_MaxSpeed = 0;
             return;
         }
         if (Input.GetMouseButtonDown(1))
         {
-            currentCamera.m_YAxis.m_MaxSpeed = 10;
-            currentCamera.m_XAxis.m_MaxSpeed = 800;
+            _currentCamera.m_YAxis.m_MaxSpeed = 10;
+            _currentCamera.m_XAxis.m_MaxSpeed = 800;
         }
         if (Input.GetMouseButtonUp(1))
         {
-            currentCamera.m_YAxis.m_MaxSpeed = 0;
-            currentCamera.m_XAxis.m_MaxSpeed = 0;
+            _currentCamera.m_YAxis.m_MaxSpeed = 0;
+            _currentCamera.m_XAxis.m_MaxSpeed = 0;
         }
     }
 
     void Awake()
     {
-        currentCamera.m_XAxis.m_InputAxisValue = 180;
+        _currentCamera.m_XAxis.m_InputAxisValue = 180;
     }
 }

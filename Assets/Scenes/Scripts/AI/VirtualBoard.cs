@@ -5,16 +5,16 @@ public class VirtualBoard
 {
     private bool turn;
 
-    private readonly VirtualPiece[][] pieces;
+    private readonly IPiece[][] pieces;
 
     public int Valuation {  get; private set; }
 
-    public VirtualBoard(Piece[][] board, int valuation)
+    public VirtualBoard(IPiece[][] board, int valuation)
     {
-        pieces = new VirtualPiece[9][];
+        pieces = new IPiece[9][];
         for (int i = 0; i < 9; i++)
         {
-            pieces[i] = new VirtualPiece[7 - (i % 2)];
+            pieces[i] = new IPiece[7 - (i % 2)];
             for(int j = 0; j < pieces[i].Length; j++)
             {
                 pieces[i][j] = MakeVirtualCopy(board[i][j]);
@@ -27,24 +27,24 @@ public class VirtualBoard
 
     public void MakeMove(Move move)
     {
-        VirtualPiece start_piece = pieces[move.start_x][move.start_y];
-        VirtualPiece end_piece = pieces[move.end_x][move.end_y];
+        IPiece start_piece = pieces[move.start_x][move.start_y];
+        IPiece end_piece = pieces[move.end_x][move.end_y];
 
         if (start_piece == null)
-            throw new System.NullReferenceException("НАЧАЛЬНАЯ ФИГУРА NULL");
+            throw new System.NullReferenceException("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ NULL");
 
         DecreaseValuation(move);
 
-        //рокировка
+        //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if(move.castling)
         {
             (pieces[move.start_x][move.start_y], pieces[move.end_x][move.end_y]) = (pieces[move.end_x][move.end_y], pieces[move.start_x][move.start_y]);
         }
-        //любой другой ход
+        //пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
         else
         {
             pieces[move.end_x][move.end_y] = start_piece;
-            if (move.end_type != start_piece.type)
+            if (move.end_type != start_piece.Type)
                 ChangeType(ref pieces[move.end_x][move.end_y], move.end_type);
 
             pieces[move.start_x][move.start_y] = null;
@@ -57,24 +57,24 @@ public class VirtualBoard
 
     public void CancelMove(Move move)
     {
-        VirtualPiece start_piece = pieces[move.start_x][move.start_y];
-        VirtualPiece end_piece = pieces[move.end_x][move.end_y];
+        IPiece start_piece = pieces[move.start_x][move.start_y];
+        IPiece end_piece = pieces[move.end_x][move.end_y];
 
         if (end_piece == null)
-            throw new System.NullReferenceException("КОНЕЧНАЯ ФИГУРА NULL");
+            throw new System.NullReferenceException("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ NULL");
 
         DecreaseValuation(move);
 
-        //рокировка
+        //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (move.castling)
         {
             (pieces[move.start_x][move.start_y], pieces[move.end_x][move.end_y]) = (pieces[move.end_x][move.end_y], pieces[move.start_x][move.start_y]);
         }
-        //любой другой ход
+        //пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
         else
         {
             pieces[move.start_x][move.start_y] = end_piece;
-            if (move.start_type != end_piece.type)
+            if (move.start_type != end_piece.Type)
                 ChangeType(ref pieces[move.start_x][move.start_y], move.start_type);
 
             pieces[move.end_x][move.end_y] = move.previous_piece;
@@ -88,10 +88,10 @@ public class VirtualBoard
     public List<Move> GetAllMoves()
     {
         List<Move> moves = new();
-        foreach (VirtualPiece[] row in pieces)
-            foreach (VirtualPiece piece in row)
+        foreach (IPiece[] row in pieces)
+            foreach (IPiece piece in row)
             {
-                if (piece != null && piece.team == turn)
+                if (piece != null && piece.Team == turn)
                 {
                     foreach (Vector2Int coor in piece.GetAvaibleMooves())
                     {
@@ -113,13 +113,13 @@ public class VirtualBoard
     {
         if (pieces[move.start_x][move.start_y] != null)
         {
-            pieces[move.start_x][move.start_y].x = move.start_x;
-            pieces[move.start_x][move.start_y].y = move.start_y;
+            pieces[move.start_x][move.start_y].X = move.start_x;
+            pieces[move.start_x][move.start_y].Y = move.start_y;
         }
         if(pieces[move.end_x][move.end_y] != null)
         {
-            pieces[move.end_x][move.end_y].x = move.end_x; 
-            pieces[move.end_x][move.end_y].y = move.end_y;
+            pieces[move.end_x][move.end_y].X = move.end_x; 
+            pieces[move.end_x][move.end_y].Y = move.end_y;
         }       
     }
 
@@ -135,41 +135,39 @@ public class VirtualBoard
         Valuation += Evaluator.GetValue(pieces[move.end_x][move.end_y]);
     }
 
-    private VirtualPiece MakePiece(PieceType type)
+    private IPiece MakePiece(PieceType type)
     {
         switch (type)
         {
-            case PieceType.intellector: return new VirtualIntellector();
-            case PieceType.progressor: return new VirtualProgressor();
-            case PieceType.liberator: return new VirtualLiberator();
-            case PieceType.dominator: return new VirtualDominator();
-            case PieceType.agressor: return new VirtualAgressor();
-            case PieceType.defensor: return new VirtualDefensor();
-            default: throw new System.Exception("Неизвестный тип фигуры");
+            case PieceType.intellector: return new Intellector();
+            case PieceType.progressor: return new Progressor();
+            case PieceType.liberator: return new Liberator();
+            case PieceType.dominator: return new Dominator();
+            case PieceType.agressor: return new Agressor();
+            case PieceType.defensor: return new Defensor();
+            default: throw new System.Exception("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ");
         }
     }
 
-    private void ChangeType(ref VirtualPiece piece, PieceType new_type)
+    private void ChangeType(ref IPiece piece, PieceType new_type)
     {
-        VirtualPiece new_piece = MakePiece(new_type);
-        new_piece.type = new_type;
-        new_piece.x = piece.x;
-        new_piece.y = piece.y;
-        new_piece.team = piece.team;
-        new_piece.board = this.pieces;
+        IPiece new_piece = MakePiece(new_type);
+        new_piece.X = piece.X;
+        new_piece.Y = piece.Y;
+        new_piece.Team = piece.Team;
+        new_piece.Board = this.pieces;
 
         piece = new_piece;
     }
 
-    private VirtualPiece MakeVirtualCopy(Piece piece)
+    private IPiece MakeVirtualCopy(IPiece piece)
     {
         if(piece == null ) return null;
-        VirtualPiece pieceCopy = MakePiece(piece.type);
-        pieceCopy.x = piece.x;
-        pieceCopy.y = piece.y;
-        pieceCopy.team = piece.team;
-        pieceCopy.type = piece.type;
-        pieceCopy.board = this.pieces;
+        IPiece pieceCopy = MakePiece(piece.Type);
+        pieceCopy.X = piece.X;
+        pieceCopy.Y = piece.Y;
+        pieceCopy.Team = piece.Team;
+        pieceCopy.Board = this.pieces;
 
         return pieceCopy;
     }

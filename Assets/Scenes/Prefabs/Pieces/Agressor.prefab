@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 641633a3be70526499b2ad74b4ddb6cb, type: 3}
       propertyPath: m_Name
-      value: agressor 1
+      value: Agressor
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -74,11 +74,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 3921855789588228246}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4230e8071f2de0643a006832260668e5, type: 3}
+  m_Script: {fileID: 11500000, guid: 9e289a89f746c8e45a84572bbd1569dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 5
-  x: 0
-  y: 0
-  team: 0
-  board: {fileID: 0}

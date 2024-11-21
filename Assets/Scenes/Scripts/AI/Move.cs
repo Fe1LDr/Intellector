@@ -12,22 +12,22 @@ public class Move
     public int end_y;
     public PieceType end_type;
 
-    public VirtualPiece previous_piece;//опасно!
+    public IPiece previous_piece;//опасно!
     public bool castling;
     public bool taking;
 
-    public Move(VirtualPiece piece, Vector2Int coor)
+    public Move(IPiece piece, Vector2Int coor)
     {
-        start_x = piece.x;
-        start_y = piece.y;
-        start_type = piece.type;
+        start_x = piece.X;
+        start_y = piece.Y;
+        start_type = piece.Type;
         end_x = coor.x;
         end_y = coor.y;
-        end_type = piece.type;
+        end_type = piece.Type;
 
-        VirtualPiece start_piece = piece.board[start_x][start_y];
-        VirtualPiece end_piece = piece.board[end_x][end_y];
-        castling = (start_piece != null && start_piece.type == PieceType.intellector && end_piece != null && end_piece.type == PieceType.defensor && start_piece.team == end_piece.team);
+        IPiece start_piece = piece.Board[start_x][start_y];
+        IPiece end_piece = piece.Board[end_x][end_y];
+        castling = (start_piece != null && start_piece.Type == PieceType.intellector && end_piece != null && end_piece.Type == PieceType.defensor && start_piece.Team == end_piece.Team);
 
         taking = (end_piece != null) && (!castling);
 
@@ -35,7 +35,7 @@ public class Move
         else previous_piece = null;
     }
 
-    public static List<Move> MoveWithIntellector(VirtualPiece piece, Vector2Int coor)
+    public static List<Move> MoveWithIntellector(IPiece piece, Vector2Int coor)
     {
         List<Move> moves = new();
         Move standard = new Move(piece, coor);
@@ -43,7 +43,7 @@ public class Move
 
         if (standard.taking)
         {
-            moves.Add(new Move(standard, piece.board[coor.x][coor.y].type));
+            moves.Add(new Move(standard, piece.Board[coor.x][coor.y].Type));
         }
 
         return moves;
