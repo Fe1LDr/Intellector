@@ -51,11 +51,9 @@ public class Board : MonoBehaviour
         x_offset = tileSize / Mathf.Sqrt(3) * 1.51f;
         y_offset = tileSize;
 
-        Settings settings = Settings.Load();
         PlayerTeam = GameInfo.Load().Team;
-        LogWriter.WriteLog($"Назначенный цвет: {PlayerTeam}");
-        NetworkGame = settings.GameMode == GameMode.Network;
-        (WhiteTeamMaterial, BlackTeamMaterial) = materialSelector.GetCurrentMaterials(settings.Material);
+        NetworkGame = Settings.GameMode == GameMode.Network;
+        (WhiteTeamMaterial, BlackTeamMaterial) = materialSelector.GetCurrentMaterials(Settings.PieceMaterials);
 
         GenerateAllTiles();
         GenerateAllPieces();

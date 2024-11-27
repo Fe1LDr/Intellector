@@ -118,11 +118,10 @@ public class NetworkGamesScene : MonoBehaviour
 
     private void GoToGameScene()
     {
-        Settings settings = Settings.Load();
-        settings.GameMode = GameMode.Network;
-        settings.Save();
+        Settings.GameMode = GameMode.Network;
         SceneManager.LoadScene(1);
     }
+
     public void Exit()
     {
         SceneManager.LoadScene(0);

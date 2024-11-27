@@ -22,9 +22,10 @@ public class ServerConnection
 
     private static TcpClient ConnectToServer()
     {
-        TcpClient client = new TcpClient(Settings.ServerConnection.ServerIP, Settings.ServerConnection.Port);
+        Connection connection = Settings.GetConnection();
+        TcpClient client = new TcpClient(connection.ServerIP, connection.Port);
 
-        SendString(Settings.ServerConnection.Password, client.GetStream());
+        SendString(connection.Password, client.GetStream());
         CheckVersion(client.GetStream());
 
         return client;
@@ -32,14 +33,14 @@ public class ServerConnection
 
     private static void CheckVersion(NetworkStream stream)
     {
-        SendInt(Settings.version, stream);
+        SendInt(Settings.Version, stream);
         int server_version = RecvInt(stream);
-        if (Settings.version != server_version)
+        if (Settings.Version != server_version)
         {
             throw new VersionException(
              $"\"Неподходящая версия\n" +
              $"Версия сервера - {VerToStr(server_version)}\n" +
-             $"Используемая версия клиента - {VerToStr(Settings.version)}\""
+             $"Используемая версия клиента - {VerToStr(Settings.Version)}\""
              );
         }
 

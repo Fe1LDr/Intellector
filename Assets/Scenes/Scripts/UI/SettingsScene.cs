@@ -20,9 +20,8 @@ public class SettingsScene : MonoBehaviour
 
     private void ShowCurrentSettings()
     {
-        settings = Settings.Load();
-        NameInput.text = settings.UserName;
-        MaterialName.text = MaterialSelector.MaterialName(settings.Material);
+        NameInput.text = Settings.UserName;
+        MaterialName.text = MaterialSelector.MaterialName(Settings.PieceMaterials);
     }
 
     public void InputChanged() => CheckName();
@@ -30,7 +29,7 @@ public class SettingsScene : MonoBehaviour
     private bool CheckName()
     {
         string error_mes;
-        bool valid = Settings.CheckName(NameInput.text, out error_mes);
+        bool valid = UserNameValidator.CheckName(NameInput.text, out error_mes);
         ErrorText.text = error_mes;
         return valid;
     }
@@ -39,8 +38,7 @@ public class SettingsScene : MonoBehaviour
     {
         if (CheckName())
         {
-            settings.UserName = NameInput.text;
-            settings.Save();
+            Settings.UserName = NameInput.text;
             Exit();
         }
     }
@@ -53,12 +51,12 @@ public class SettingsScene : MonoBehaviour
 
     public void SwitchMaterial(int direction)
     {
-        int new_materials_number = ((int)settings.Material + direction);
+        int new_materials_number = ((int)Settings.PieceMaterials + direction);
         int max_number = Enum.GetNames(typeof(PieceMaterials)).Length;
         if (new_materials_number >= max_number) new_materials_number = 0;
         if (new_materials_number < 0) new_materials_number = max_number - 1;
-        settings.Material = (PieceMaterials)(new_materials_number);
-        MaterialName.text = MaterialSelector.MaterialName(settings.Material);
+        Settings.PieceMaterials = (PieceMaterials)(new_materials_number);
+        MaterialName.text = MaterialSelector.MaterialName(Settings.PieceMaterials);
     }
 
     public void Exit()

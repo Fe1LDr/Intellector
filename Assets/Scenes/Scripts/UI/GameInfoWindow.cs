@@ -11,7 +11,7 @@ public class GameInfoWindow : MonoBehaviour
     [SerializeField] Text ErrorText;
     private void Awake()
     {
-        NameInput.text = Settings.Load().UserName;
+        NameInput.text = Settings.UserName;
         TimeControlDropDown.options = new List<Dropdown.OptionData>();
         foreach(TimeContol time in TimeControlSelector.time_controls)
         {
@@ -38,7 +38,7 @@ public class GameInfoWindow : MonoBehaviour
     private bool CheckName()
     {
         string error_mes;
-        bool valid = Settings.CheckName(NameInput.text, out error_mes);
+        bool valid = UserNameValidator.CheckName(NameInput.text, out error_mes);
         ErrorText.text = error_mes;
         return valid;
     }

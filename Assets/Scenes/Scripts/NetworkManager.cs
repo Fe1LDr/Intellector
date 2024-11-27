@@ -1,10 +1,6 @@
 using System.Net.Sockets;
 using UnityEngine;
-using System.IO;
-using System.Threading;
 using System;
-using System.Text;
-using UnityEngine.SceneManagement;
 using static LogWriter;
 using System.Threading.Tasks;
 using Assets.Scenes.Scripts.Server;
@@ -28,8 +24,7 @@ public class NetworkManager : MonoBehaviour, IServerListenerObserver
 
     void Start()
     {
-        Settings settings = Settings.Load();
-        if (settings.GameMode == GameMode.Network)
+        if (Settings.GameMode == GameMode.Network)
         {
             ServerConnection connection = ServerConnection.GetConnection();
             server_stream = connection.Client.GetStream();

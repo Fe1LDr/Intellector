@@ -26,9 +26,4 @@ public class CameraMove : MonoBehaviour
             _currentCamera.m_XAxis.m_MaxSpeed = 0;
         }
     }
-
-    void Awake()
-    {
-        _currentCamera.m_XAxis.m_InputAxisValue = 180;
-    }
 }

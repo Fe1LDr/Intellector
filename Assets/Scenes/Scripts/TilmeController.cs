@@ -35,7 +35,7 @@ public class TimeController : MonoBehaviour
 
     private void Awake()
     {
-        if (Settings.Load().GameMode == GameMode.Network)
+        if (Settings.GameMode == GameMode.Network)
         {
             network_manager.TimeEvent += TimeReceived;
             network_manager.GameStartEvent += StartGame;

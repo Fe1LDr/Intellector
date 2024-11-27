@@ -3,16 +3,10 @@ using UnityEngine;
 
 public class CameraChange : MonoBehaviour
 {
-    private Camera _camera;
     public CinemachineFreeLook FreeCamera;
     public CinemachineVirtualCamera VirtCamera2;
 
     [SerializeField] private Board board;
-    void Start()
-    {
-        _camera = GetComponent<Camera>();
-        _camera = Camera.main;
-    }
 
     void Update()
     {

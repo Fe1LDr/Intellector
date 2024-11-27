@@ -10,17 +10,13 @@ public class Scenes: MonoBehaviour
 
     public void LocalGame()
     {
-        var settings = Settings.Load();
-        settings.GameMode = GameMode.Local;
-        settings.Save();
+        Settings.GameMode = GameMode.Local;
         ChangeScenes(1);
     }
 
     public void AIGame()
     {
-        var settings = Settings.Load();
-        settings.GameMode = GameMode.AI;
-        settings.Save();
+        Settings.GameMode = GameMode.AI;
         ChangeScenes(1);
     }
 
